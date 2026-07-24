@@ -8,6 +8,7 @@
   <meta property="og:title" content="TidyDisk — Free Disk Cleaner for Mac Developers">
   <meta property="og:description" content="Reclaim gigabytes from Xcode, node_modules, caches and forgotten projects. Free, notarized, on-device.">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="https://tidydisk.riekapps.com/screenshot.png">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫧</text></svg>">
   <link rel="canonical" href="https://tidydisk.riekapps.com/">
   <script type="application/ld+json">
@@ -92,6 +93,12 @@
     }
     .brew b { color: var(--green); font-weight: 500; }
 
+    .shot {
+      display: block; max-width: 100%; height: auto;
+      margin: 40px auto 0; border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+    }
     .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
     .badge {
       font-size: 12.5px; color: var(--muted);
@@ -154,6 +161,7 @@
         <span class="badge"><b>✓</b> No account, no telemetry</span>
         <span class="badge"><b>✓</b> Review everything before it's deleted</span>
       </div>
+      <img class="shot" src="screenshot.png" alt="TidyDisk main window — Smart Scan welcome screen" width="2000" height="1384">
     </section>
 
     <section class="features">

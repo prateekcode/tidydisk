@@ -4,6 +4,8 @@
 
 **Website & download:** [tidydisk.riekapps.com](https://tidydisk.riekapps.com)
 
+![TidyDisk main window](web/screenshot.png)
+
 - 100% on-device — nothing leaves your Mac, no account, no telemetry
 - Native SwiftUI, universal binary (Apple Silicon + Intel), a few MB on disk
 - Notarized by Apple
