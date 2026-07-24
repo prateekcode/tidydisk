@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://tidydisk.riekapps.com/sitemap.xml
