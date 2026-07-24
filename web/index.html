@@ -84,6 +84,13 @@
     .btn:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(124, 58, 237, 0.6); }
     .cta .fineprint { color: var(--muted); font-size: 13px; }
     .cta .fineprint b { color: var(--text); font-weight: 600; }
+    .brew {
+      font-family: "SF Mono", ui-monospace, Menlo, monospace;
+      font-size: 13px; color: var(--muted);
+      background: rgba(0, 0, 0, 0.35); border: 1px solid var(--border);
+      border-radius: 10px; padding: 8px 14px;
+    }
+    .brew b { color: var(--green); font-weight: 500; }
 
     .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
     .badge {
@@ -140,6 +147,7 @@
       <div class="cta">
         <a class="btn" href="TidyDisk-1.0.zip" download>⬇&nbsp; Download for Mac — Free</a>
         <span class="fineprint">Version 1.0 · macOS 14+ · Apple Silicon &amp; Intel · <b>Notarized by Apple</b></span>
+        <span class="brew">or&nbsp; <b>brew install --cask prateek-apk/tap/tidydisk</b></span>
       </div>
       <div class="badges">
         <span class="badge"><b>✓</b> 100% on-device — nothing leaves your Mac</span>
@@ -192,7 +200,7 @@
 
     <footer>
       <p>© 2026 <a href="https://riekapps.com">RiekApps</a> · TidyDisk runs entirely on your Mac — no data is collected or transmitted.</p>
-      <p>Questions? <a href="mailto:riekapps@gmail.com">Get in touch</a></p>
+      <p><a href="https://github.com/prateek-apk/tidydisk">Open source on GitHub</a> · Questions? <a href="mailto:riekapps@gmail.com">Get in touch</a></p>
     </footer>
   </div>
 </body>
