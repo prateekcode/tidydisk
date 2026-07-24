@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TidyDisk — Free Disk Cleaner for Mac Developers</title>
+  <meta name="description" content="TidyDisk is a free macOS app that reclaims disk space from Xcode DerivedData, node_modules, simulators, package-manager caches and more. Notarized by Apple, runs 100% on-device.">
+  <meta property="og:title" content="TidyDisk — Free Disk Cleaner for Mac Developers">
+  <meta property="og:description" content="Reclaim gigabytes from Xcode, node_modules, caches and forgotten projects. Free, notarized, on-device.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫧</text></svg>">
+  <link rel="canonical" href="https://tidydisk.riekapps.com/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "TidyDisk",
+    "operatingSystem": "macOS 14.0 or later",
+    "applicationCategory": "UtilitiesApplication",
+    "description": "Free disk cleaner for Mac developers. Reclaims space from Xcode DerivedData, node_modules, simulators and package-manager caches. Runs 100% on-device.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "downloadUrl": "https://tidydisk.riekapps.com/TidyDisk-1.0.zip",
+    "author": { "@type": "Organization", "name": "RiekApps", "url": "https://riekapps.com" }
+  }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0e0a1f;
+      --card: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.10);
+      --text: #f2effc;
+      --muted: #a89fc7;
+      --accent: #a78bfa;
+      --accent2: #7c3aed;
+      --green: #34d399;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(1000px 600px at 70% -10%, rgba(124, 58, 237, 0.35), transparent 60%),
+        radial-gradient(800px 500px at 10% 20%, rgba(167, 139, 250, 0.18), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    header { padding: 28px 0; display: flex; align-items: center; gap: 10px; }
+    header .logo { font-size: 26px; }
+    header .name { font-weight: 700; font-size: 19px; letter-spacing: -0.02em; }
+    header .by { color: var(--muted); font-size: 13px; margin-left: auto; text-decoration: none; }
+    header .by:hover { color: var(--accent); }
+
+    .hero { text-align: center; padding: 56px 0 40px; }
+    .hero h1 {
+      font-size: clamp(34px, 6vw, 56px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.12;
+    }
+    .hero h1 span {
+      background: linear-gradient(90deg, var(--accent), #f0abfc);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero p.sub {
+      color: var(--muted);
+      font-size: 19px;
+      max-width: 620px;
+      margin: 18px auto 0;
+    }
+    .cta { margin-top: 34px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      color: white; text-decoration: none;
+      font-size: 18px; font-weight: 700;
+      padding: 16px 34px; border-radius: 16px;
+      box-shadow: 0 10px 34px rgba(124, 58, 237, 0.45);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(124, 58, 237, 0.6); }
+    .cta .fineprint { color: var(--muted); font-size: 13px; }
+    .cta .fineprint b { color: var(--text); font-weight: 600; }
+
+    .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+    .badge {
+      font-size: 12.5px; color: var(--muted);
+      border: 1px solid var(--border); border-radius: 999px;
+      padding: 5px 12px; background: var(--card);
+    }
+    .badge b { color: var(--green); }
+
+    .features {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 16px; padding: 48px 0;
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 22px;
+    }
+    .card .ico { font-size: 26px; }
+    .card h3 { font-size: 16px; margin: 10px 0 4px; letter-spacing: -0.01em; }
+    .card p { color: var(--muted); font-size: 14px; }
+
+    .install { padding: 8px 0 56px; }
+    .install h2 { font-size: 24px; letter-spacing: -0.02em; margin-bottom: 18px; text-align: center; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .step { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+    .step .n {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--accent2); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; margin-bottom: 10px;
+    }
+    .step p { font-size: 14px; color: var(--muted); }
+    .step p b { color: var(--text); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 26px 0 40px; text-align: center;
+      color: var(--muted); font-size: 13px;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <span class="logo">🫧</span>
+      <span class="name">TidyDisk</span>
+      <a class="by" href="https://riekapps.com">a RiekApps product</a>
+    </header>
+
+    <section class="hero">
+      <h1>Your Mac is full of<br><span>developer junk.</span></h1>
+      <p class="sub">TidyDisk finds the gigabytes hiding in Xcode DerivedData, node_modules, simulators, package-manager caches and forgotten projects — and cleans them safely.</p>
+      <div class="cta">
+        <a class="btn" href="TidyDisk-1.0.zip" download>⬇&nbsp; Download for Mac — Free</a>
+        <span class="fineprint">Version 1.0 · macOS 14+ · Apple Silicon &amp; Intel · <b>Notarized by Apple</b></span>
+      </div>
+      <div class="badges">
+        <span class="badge"><b>✓</b> 100% on-device — nothing leaves your Mac</span>
+        <span class="badge"><b>✓</b> No account, no telemetry</span>
+        <span class="badge"><b>✓</b> Review everything before it's deleted</span>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="card">
+        <div class="ico">✨</div>
+        <h3>Smart Scan</h3>
+        <p>Detects the dev tools installed on <em>your</em> Mac — Xcode, npm, CocoaPods, Gradle, Docker, Homebrew — and only scans what's actually there.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🔭</div>
+        <h3>Space Lens for projects</h3>
+        <p>Finds every project on your Mac and shows what its build artifacts weigh. Clean node_modules and build folders, or archive whole projects to GitHub or iCloud first.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🗂️</div>
+        <h3>Large files &amp; duplicates</h3>
+        <p>Surfaces forgotten multi-gigabyte files and duplicate downloads. Deletions go to Trash, so nothing is ever lost by accident.</p>
+      </div>
+      <div class="card">
+        <div class="ico">📊</div>
+        <h3>Lives in your menu bar</h3>
+        <p>Free-space at a glance, one-click scans, and an optional weekly scan that notifies you when junk piles up again.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🛡️</div>
+        <h3>Three safety tiers</h3>
+        <p>Safe caches are pre-selected. Aggressive and nuclear options — like deleting all node_modules — always require an explicit opt-in.</p>
+      </div>
+      <div class="card">
+        <div class="ico">⚡</div>
+        <h3>Native &amp; tiny</h3>
+        <p>A real SwiftUI app, not Electron. Universal binary for Apple Silicon and Intel, a few megabytes on disk.</p>
+      </div>
+    </section>
+
+    <section class="install">
+      <h2>Install in 10 seconds</h2>
+      <div class="steps">
+        <div class="step"><div class="n">1</div><p><b>Download</b> the zip and open it — it unpacks to TidyDisk.app.</p></div>
+        <div class="step"><div class="n">2</div><p><b>Drag TidyDisk.app</b> into your Applications folder.</p></div>
+        <div class="step"><div class="n">3</div><p><b>Open it</b> and hit Scan. It's notarized by Apple, so it opens without warnings.</p></div>
+      </div>
+    </section>
+
+    <footer>
+      <p>© 2026 <a href="https://riekapps.com">RiekApps</a> · TidyDisk runs entirely on your Mac — no data is collected or transmitted.</p>
+      <p>Questions? <a href="mailto:riekapps@gmail.com">Get in touch</a></p>
+    </footer>
+  </div>
+</body>
+</html>
