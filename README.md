@@ -13,7 +13,7 @@
 **Homebrew:**
 
 ```sh
-brew install --cask prateek-apk/tap/tidydisk
+brew install --cask prateekcode/tap/tidydisk
 ```
 
 **Or manually:** download the zip from [tidydisk.riekapps.com](https://tidydisk.riekapps.com), unzip, drag `TidyDisk.app` to Applications.
