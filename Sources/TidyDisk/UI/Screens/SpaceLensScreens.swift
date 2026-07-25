@@ -37,6 +37,15 @@ struct ProjectsView: View {
                     }
                     .padding(24)
                 }
+                .alert("Couldn't complete", isPresented: Binding(
+                    get: { state.actionAlert != nil },
+                    set: { if !$0 { state.actionAlert = nil } }
+                )) {
+                    Button("Open Settings") { state.sidebar = .settings }
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    Text(state.actionAlert ?? "")
+                }
                 HStack {
                     if state.projectsScanning {
                         ProgressView().controlSize(.small).tint(.white)

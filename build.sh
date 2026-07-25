@@ -37,7 +37,7 @@ if [ "${1:-}" = "--release" ]; then
   echo "▸ Signing with: $IDENTITY"
   codesign --force --options runtime --timestamp --sign "$IDENTITY" "$APP"
 
-  ZIP="TidyDisk-1.0.zip"
+  ZIP="TidyDisk-1.1.zip"
   rm -f "$ZIP"
   ditto -c -k --sequesterRsrc --keepParent "$APP" "$ZIP"
 

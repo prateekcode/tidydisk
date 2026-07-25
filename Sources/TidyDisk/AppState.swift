@@ -15,6 +15,7 @@ enum SidebarItem: Hashable {
     case largeFiles
     case duplicates
     case category(TaskCategory)
+    case settings
     case log
 }
 
@@ -199,7 +200,10 @@ final class AppState: ObservableObject {
         var id: String { zipPath }
     }
 
-    let cloudDestinations = Engine.cloudDestinations()
+    @Published var cloudDestinations = Engine.cloudDestinations()
+
+    /// Failure surfaced as an alert (log has the full detail).
+    @Published var actionAlert: String?
 
     func pushProjectToGitHub(_ project: ProjectInfo) {
         guard requirePro() else { return }
@@ -213,6 +217,11 @@ final class AppState: ObservableObject {
             lines.forEach { appendLog("    " + $0) }
             appendLog(ok ? "— \(project.name) is on GitHub —" : "— Push failed, see log —")
             projectActivity[project.path] = nil
+            if !ok {
+                actionAlert = lines.last(where: { $0.hasPrefix("[fail]") })
+                    .map { String($0.dropFirst("[fail] ".count)) }
+                    ?? "Push failed — see the Log for details."
+            }
         }
     }
 
@@ -231,6 +240,9 @@ final class AppState: ObservableObject {
                 archivePrompt = ArchivePrompt(project: project,
                                               destinationName: destination.name,
                                               zipPath: zipPath)
+            } else {
+                actionAlert = "Archiving to \(destination.name) failed — TidyDisk may not have "
+                    + "permission to write there. Grant access in Settings → Backup Destinations."
             }
         }
     }
@@ -343,6 +355,89 @@ final class AppState: ObservableObject {
             }
             freeSpace = Engine.freeDiskSpace()
         }
+    }
+
+    // MARK: - Settings (connections & destinations)
+
+    enum ProbeResult: Equatable {
+        case ok
+        case failed(String)
+    }
+
+    /// GitHub login the pushes will use (token or gh CLI), nil = not connected.
+    @Published var githubLogin: String?
+    @Published var githubUsesToken = false
+    @Published var githubChecking = false
+    @Published var githubError: String?
+    /// destination path → last access-probe result
+    @Published var probeResults: [String: ProbeResult] = [:]
+
+    func checkGitHubConnection() {
+        guard !githubChecking else { return }
+        githubChecking = true
+        githubError = nil
+        Task {
+            let hasToken = Engine.githubToken != nil
+            let account = await Task.detached(priority: .userInitiated) {
+                Engine.githubAccount()
+            }.value
+            githubLogin = account?.login
+            githubUsesToken = hasToken && account != nil
+            githubChecking = false
+        }
+    }
+
+    func connectGitHub(token: String) {
+        let trimmed = token.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !githubChecking else { return }
+        githubChecking = true
+        githubError = nil
+        Task {
+            let account = await Task.detached(priority: .userInitiated) {
+                Engine.validateGitHubToken(trimmed)
+            }.value
+            if let account {
+                Engine.storeGitHubToken(trimmed)
+                githubLogin = account.login
+                githubUsesToken = true
+                appendLog("— GitHub connected as \(account.login) —")
+            } else {
+                githubError = "That token didn't work — check it has the \"repo\" scope and try again."
+            }
+            githubChecking = false
+        }
+    }
+
+    func disconnectGitHub() {
+        Engine.deleteGitHubToken()
+        githubUsesToken = false
+        checkGitHubConnection() // may fall back to gh CLI
+        appendLog("— GitHub token removed —")
+    }
+
+    func probeDestination(_ destination: CloudDestination) {
+        Task {
+            let error = await Task.detached(priority: .userInitiated) {
+                Engine.probeDestination(destination)
+            }.value
+            withAnimation(.spring(duration: 0.3)) {
+                probeResults[destination.path] = error.map { .failed($0) } ?? .ok
+            }
+        }
+    }
+
+    func addCustomDestination(path: String) {
+        Engine.addCustomDestination(path)
+        cloudDestinations = Engine.cloudDestinations()
+        if let dest = cloudDestinations.first(where: { $0.path == path }) {
+            probeDestination(dest)
+        }
+    }
+
+    func removeCustomDestination(path: String) {
+        Engine.removeCustomDestination(path)
+        probeResults[path] = nil
+        cloudDestinations = Engine.cloudDestinations()
     }
 
     // MARK: - Pro license

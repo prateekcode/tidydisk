@@ -22,7 +22,43 @@ extension Engine {
             let name = provider.split(separator: "-").first.map(String.init) ?? provider
             result.append(CloudDestination(name: name, path: cloudStorage + "/" + provider))
         }
+        for path in customDestinationPaths where !result.contains(where: { $0.path == path }) {
+            result.append(CloudDestination(name: (path as NSString).lastPathComponent, path: path))
+        }
         return result
+    }
+
+    private static let customDestinationsKey = "customDestinations"
+
+    static var customDestinationPaths: [String] {
+        UserDefaults.standard.stringArray(forKey: customDestinationsKey) ?? []
+    }
+
+    static func addCustomDestination(_ path: String) {
+        var paths = customDestinationPaths
+        guard !paths.contains(path) else { return }
+        paths.append(path)
+        UserDefaults.standard.set(paths, forKey: customDestinationsKey)
+    }
+
+    static func removeCustomDestination(_ path: String) {
+        UserDefaults.standard.set(customDestinationPaths.filter { $0 != path },
+                                  forKey: customDestinationsKey)
+    }
+
+    /// Actually writes (and removes) a probe file — this is what triggers macOS's
+    /// permission prompt for iCloud/CloudStorage folders. Returns nil on success.
+    static func probeDestination(_ destination: CloudDestination) -> String? {
+        let dir = destination.path + "/TidyDisk Backups"
+        let probe = dir + "/.tidydisk-access-probe"
+        do {
+            try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
+            try "ok".write(toFile: probe, atomically: true, encoding: .utf8)
+            try FileManager.default.removeItem(atPath: probe)
+            return nil
+        } catch {
+            return error.localizedDescription
+        }
     }
 
     /// Zips the project into "<destination>/TidyDisk Backups/<name> <date>.zip".
@@ -57,13 +93,22 @@ extension Engine {
     .DS_Store
     """
 
+    /// Inserts the token into a github.com https URL so a push needs no credential helper.
+    private static func tokenized(_ url: String, token: String) -> String? {
+        guard url.hasPrefix("https://github.com/") else { return nil }
+        return url.replacingOccurrences(of: "https://github.com/",
+                                        with: "https://x-access-token:\(token)@github.com/")
+    }
+
     /// Init repo if needed, commit everything, create a private GitHub repo if there's no remote, push.
+    /// Auth: token from Settings first, gh CLI as fallback.
     static func pushProjectToGitHub(_ project: ProjectInfo) -> (ok: Bool, log: [String]) {
         var log: [String] = []
 
-        guard run(["gh", "auth", "status"]).status == 0 else {
-            return (false, ["[fail] gh CLI not authenticated — run: gh auth login"])
+        guard let account = githubAccount() else {
+            return (false, ["[fail] GitHub isn't connected — add a token in Settings → GitHub"])
         }
+        let token = githubToken
 
         if git(project, ["rev-parse", "--git-dir"]).status != 0 {
             log.append(git(project, ["init"]).status == 0
@@ -71,14 +116,10 @@ extension Engine {
                        : "[fail] git init")
         }
 
-        // Repo-local identity from the active gh account (never the global config).
-        let login = run(["gh", "api", "user", "--jq", ".login"]).output.trimmingCharacters(in: .whitespacesAndNewlines)
-        let userID = run(["gh", "api", "user", "--jq", ".id"]).output.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !login.isEmpty {
-            _ = git(project, ["config", "user.name", login])
-            _ = git(project, ["config", "user.email", "\(userID)+\(login)@users.noreply.github.com"])
-            log.append("[done] repo-local identity: \(login)")
-        }
+        // Repo-local identity from the connected account (never the global config).
+        _ = git(project, ["config", "user.name", account.login])
+        _ = git(project, ["config", "user.email", account.noreplyEmail])
+        log.append("[done] repo-local identity: \(account.login)")
 
         let gitignorePath = project.path + "/.gitignore"
         if !FileManager.default.fileExists(atPath: gitignorePath) {
@@ -92,18 +133,31 @@ extension Engine {
                    ? "[done] committed changes"
                    : "[skip] nothing new to commit")
 
-        let hasRemote = git(project, ["remote", "get-url", "origin"]).status == 0
-        if hasRemote {
-            let push = git(project, ["push", "origin", "HEAD"])
-            log.append(push.status == 0 ? "[done] pushed to origin" : "[fail] push: \(push.output.suffix(120))")
-            return (push.status == 0, log)
-        } else {
-            let create = run(["gh", "repo", "create", project.name, "--private",
-                              "--source", project.path, "--remote", "origin", "--push"])
-            log.append(create.status == 0
-                       ? "[done] created private repo \(login)/\(project.name) and pushed"
-                       : "[fail] gh repo create: \(create.output.suffix(160))")
-            return (create.status == 0, log)
+        // Work out where to push: existing origin, or a fresh private repo.
+        var remoteURL = git(project, ["remote", "get-url", "origin"]).output
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if remoteURL.isEmpty {
+            if let token {
+                let (url, error) = createGitHubRepo(token: token, account: account, name: project.name)
+                guard let url else { return (false, log + ["[fail] create repo: \(error ?? "unknown error")"]) }
+                _ = git(project, ["remote", "add", "origin", url])
+                remoteURL = url
+                log.append("[done] created private repo \(account.login)/\(project.name)")
+            } else {
+                let create = run(["gh", "repo", "create", project.name, "--private",
+                                  "--source", project.path, "--remote", "origin", "--push"])
+                log.append(create.status == 0
+                           ? "[done] created private repo \(account.login)/\(project.name) and pushed"
+                           : "[fail] gh repo create: \(create.output.suffix(160))")
+                return (create.status == 0, log)
+            }
         }
+
+        let pushURL = token.flatMap { tokenized(remoteURL, token: $0) } ?? "origin"
+        let push = git(project, ["push", pushURL, "HEAD"])
+        log.append(push.status == 0
+                   ? "[done] pushed to \(account.login)/\(project.name)"
+                   : "[fail] push: \(push.output.suffix(160))")
+        return (push.status == 0, log)
     }
 }

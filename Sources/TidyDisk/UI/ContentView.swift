@@ -38,6 +38,9 @@ struct ContentView: View {
         case .category(let category):
             CategoryView(category: category)
                 .transition(.opacity)
+        case .settings:
+            SettingsView()
+                .transition(.opacity)
         case .log:
             LogView()
                 .transition(.opacity)
@@ -100,6 +103,7 @@ struct SidebarView: View {
             if ProConfig.paywallEnabled {
                 ProSidebarBadge()
             }
+            SidebarRow(item: .settings, label: "Settings", icon: "gearshape.fill")
             SidebarRow(item: .log, label: "Log", icon: "text.alignleft")
                 .padding(.bottom, 14)
         }
