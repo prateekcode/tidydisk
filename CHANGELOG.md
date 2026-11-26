@@ -65,7 +65,8 @@ First public release.
 - Menu bar item with free space, a one-click scan and an optional weekly scan with a notification.
 - Homebrew cask: `brew install --cask prateekcode/tap/tidydisk`.
 
-[Unreleased]: https://github.com/prateekcode/tidydisk/compare/v2.0...HEAD
+[Unreleased]: https://github.com/prateekcode/tidydisk/compare/v2.1...HEAD
+[2.1]: https://github.com/prateekcode/tidydisk/compare/v2.0...v2.1
 [2.0]: https://github.com/prateekcode/tidydisk/compare/v1.1...v2.0
 [1.1]: https://github.com/prateekcode/tidydisk/compare/v1.0...v1.1
 [1.0]: https://github.com/prateekcode/tidydisk/releases/tag/v1.0
