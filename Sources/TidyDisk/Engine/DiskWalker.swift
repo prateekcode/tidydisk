@@ -239,7 +239,7 @@ struct DiskWalker {
     /// Developer output wherever it appears.
     private static let developerDirs: Set<String> = [
         "node_modules", ".git", "Pods", "DerivedData", ".dart_tool", ".gradle", ".venv", "venv",
-        "__pycache__", ".next", ".turbo",
+        "__pycache__", "site-packages", ".next", ".turbo",
     ]
     /// Bundles and tool folders whose insides are not "your large files".
     private static let opaqueSuffixes = [

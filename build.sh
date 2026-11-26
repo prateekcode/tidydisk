@@ -9,14 +9,17 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+ARCHS=(--arch arm64 --arch x86_64)
 echo "▸ Building (release, universal arm64+x86_64)…"
-swift build -c release --arch arm64 --arch x86_64
+swift build -c release "${ARCHS[@]}"
+# The products folder moved between Swift toolchains (.build/apple → .build/out): ask.
+BIN="$(swift build -c release "${ARCHS[@]}" --show-bin-path)"
 
 APP="TidyDisk.app"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
-cp .build/apple/Products/Release/TidyDisk "$APP/Contents/MacOS/TidyDisk"
+cp "$BIN/TidyDisk" "$APP/Contents/MacOS/TidyDisk"
 cp Scripts/Info.plist "$APP/Contents/Info.plist"
 
 if [ ! -f Scripts/AppIcon.icns ]; then
