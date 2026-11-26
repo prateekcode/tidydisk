@@ -15,7 +15,8 @@ extension Engine {
 
     /// "Prateek's MacBook Air"
     static func machineName() -> String {
-        Host.current().localizedName ?? "This Mac"
+        // `--machine-name` lets a `--shot` for the README show a neutral name.
+        Snapshot.value(after: "--machine-name") ?? Host.current().localizedName ?? "This Mac"
     }
 
     /// "Macintosh HD"

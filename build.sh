@@ -3,7 +3,7 @@
 # Usage:
 #   ./build.sh            # local build (ad-hoc signed)
 #   ./build.sh --install  # local build + copy to /Applications
-#   ./build.sh --release  # Developer ID sign + notarize + staple → TidyDisk-1.0.zip
+#   ./build.sh --release  # Developer ID sign + notarize + staple → TidyDisk-<version>.zip
 #                         # (needs a "Developer ID Application" cert and
 #                         #  `xcrun notarytool store-credentials riekclean` done once)
 set -euo pipefail
@@ -40,7 +40,8 @@ if [ "${1:-}" = "--release" ]; then
   echo "▸ Signing with: $IDENTITY"
   codesign --force --options runtime --timestamp --sign "$IDENTITY" "$APP"
 
-  ZIP="TidyDisk-1.1.zip"
+  VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' Scripts/Info.plist)"
+  ZIP="TidyDisk-$VERSION.zip"
   rm -f "$ZIP"
   ditto -c -k --sequesterRsrc --keepParent "$APP" "$ZIP"
 

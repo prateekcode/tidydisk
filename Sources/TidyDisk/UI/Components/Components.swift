@@ -422,21 +422,30 @@ struct StatTile: View {
     var color: Color = Theme.gray
     let value: String
     let detail: String
+    /// 0...1 draws a meter beside the value.
+    var meter: Double?
+    var detailLines = 1
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 10) {
                 if let icon { IconTile(icon, color: color, size: 28) }
-                SectionLabel(label)
+                SectionLabel(label).lineLimit(1).minimumScaleFactor(0.8)
             }
-            Text(value)
-                .font(.display(22))
-                .foregroundStyle(Theme.textPrimary)
-                .contentTransition(.numericText())
+            HStack(spacing: 12) {
+                Text(value)
+                    .font(.display(22))
+                    .foregroundStyle(Theme.textPrimary)
+                    .contentTransition(.numericText())
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                if let meter { Meter(value: meter, color: color) }
+            }
             Text(detail)
                 .font(.system(size: 13))
                 .foregroundStyle(Theme.textSecondary)
-                .lineLimit(1)
+                .lineLimit(detailLines)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .padding(18)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

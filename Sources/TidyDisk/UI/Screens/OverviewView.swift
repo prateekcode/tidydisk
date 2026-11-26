@@ -327,7 +327,7 @@ private struct AISummary: View {
         SummaryPanel(label: "AI on this Mac", icon: AppTab.ai.icon) {
             if let gpu = monitor.gpu { Badge("GPU \(Format.percent(gpu))", color: Theme.violet) }
         } content: {
-            NavRow(icon: "brain", color: Theme.violet, title: "Models, caches and app data",
+            NavRow(icon: "brain", color: Theme.violet, title: "AI data on disk",
                    subtitle: ai.diskScanning ? "Sizing…"
                        : names(ai.diskToolNames, empty: ai.diskScanned ? "No AI tools found" : "Not scanned yet"),
                    value: ai.diskScanned ? Format.bytes(ai.diskBytes) : "—") { state.tab = .ai }
