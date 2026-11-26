@@ -29,7 +29,7 @@ enum Catalog {
         }
 
         if exists(home + "/Library/Developer/Xcode/DerivedData") {
-            add("derived-data", "Xcode DerivedData", "Build intermediates — Xcode rebuilds them",
+            add("derived-data", "Xcode DerivedData", "Build intermediates; Xcode rebuilds them",
                 "hammer.fill", .xcode, .safe,
                 .directoryContents([home + "/Library/Developer/Xcode/DerivedData"]))
         }
@@ -122,7 +122,7 @@ enum Catalog {
                 .directoryContents(vscodeDirs))
         }
         if exists(home + "/Library/Caches/JetBrains") {
-            add("jetbrains", "JetBrains caches", "IDE indexes — rebuilt on next launch",
+            add("jetbrains", "JetBrains caches", "IDE indexes, rebuilt on next launch",
                 "brain.head.profile", .appCaches, .aggressive,
                 .directoryContents([home + "/Library/Caches/JetBrains"]))
         }
@@ -139,7 +139,7 @@ enum Catalog {
                 .directoryContents([home + "/Library/Developer/Xcode/iOS DeviceSupport"]))
         }
         if exists(home + "/Library/Developer/Xcode/Archives") {
-            add("xcode-archives", "Xcode Archives", "Old app archives — keep if you need to symbolicate",
+            add("xcode-archives", "Xcode Archives", "Old app archives; keep them if you need to symbolicate",
                 "archivebox.fill", .xcode, .aggressive,
                 .directoryContents([home + "/Library/Developer/Xcode/Archives"]))
         }
@@ -176,7 +176,7 @@ enum Catalog {
 
         // ---- Nuclear ----
 
-        add("node-modules", "node_modules", "node_modules in all your projects — reinstall needed after",
+        add("node-modules", "node_modules", "node_modules in all your projects; reinstall needed after",
             "exclamationmark.triangle.fill", .nuclear, .nuclear,
             .projectSweep(dirNames: ["node_modules"]))
 

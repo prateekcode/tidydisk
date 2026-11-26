@@ -56,8 +56,7 @@ struct TopBar: View {
             // Room for the traffic lights, then the app mark.
             Spacer().frame(width: 78)
             RoundedRectangle(cornerRadius: 7, style: .continuous)
-                .fill(LinearGradient(colors: [Theme.magenta, Theme.accent],
-                                     startPoint: .topLeading, endPoint: .bottomTrailing))
+                .fill(Theme.accent)
                 .frame(width: 26, height: 26)
                 .overlay(
                     Image(systemName: "bubbles.and.sparkles.fill")
@@ -176,10 +175,17 @@ private struct WindowChrome: NSViewRepresentable {
 
 // MARK: - Snapshot mode
 
-/// `TidyDisk --shot <tab> <out.png> [seconds]` opens the app on that tab, waits
-/// for it to settle, writes the window to a PNG and quits. Used to check
+/// `TidyDisk --shot <tab> <out.png> [seconds] [--scan]` opens the app on that tab,
+/// waits for it to settle, writes the window to a PNG and quits. Used to check
 /// screens without Screen Recording permission.
 enum Snapshot {
+    /// The argument following `flag`, for options that pick what a snapshot shows.
+    static func value(after flag: String) -> String? {
+        let args = CommandLine.arguments
+        guard let index = args.firstIndex(of: flag), args.count > index + 1 else { return nil }
+        return args[index + 1]
+    }
+
     @MainActor
     static func runIfRequested(state: AppState) async {
         let args = CommandLine.arguments
@@ -189,6 +195,15 @@ enum Snapshot {
         state.tab = tab
         if let window = NSApp.windows.first(where: { $0.canBecomeMain }) {
             window.setContentSize(NSSize(width: 1180, height: 780))
+        }
+        // `--scan` fills the screens with a real scan first (and waits for it).
+        if args.contains("--scan") {
+            state.scanEverything()
+            state.apps.scan()
+            state.ai.scanDisk()
+            for _ in 0..<600 where state.isBusy || state.disk.measuring {
+                try? await Task.sleep(for: .seconds(0.5))
+            }
         }
         try? await Task.sleep(for: .seconds(delay))
         guard let window = NSApp.windows.first(where: { $0.canBecomeMain }),

@@ -200,6 +200,43 @@ struct LegendItem: View {
     }
 }
 
+/// Lays children out left to right and wraps to the next line (legends).
+struct Flow: Layout {
+    var spacing: CGFloat = 20
+    var lineSpacing: CGFloat = 10
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let rows = place(subviews, in: proposal.width ?? .infinity)
+        return CGSize(width: proposal.width ?? rows.width, height: rows.height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        for (subview, point) in zip(subviews, place(subviews, in: bounds.width).points) {
+            subview.place(at: CGPoint(x: bounds.minX + point.x, y: bounds.minY + point.y),
+                          proposal: .unspecified)
+        }
+    }
+
+    private func place(_ subviews: Subviews, in width: CGFloat)
+        -> (points: [CGPoint], width: CGFloat, height: CGFloat) {
+        var points: [CGPoint] = []
+        var x: CGFloat = 0, y: CGFloat = 0, rowHeight: CGFloat = 0, widest: CGFloat = 0
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x > 0, x + size.width > width {
+                x = 0
+                y += rowHeight + lineSpacing
+                rowHeight = 0
+            }
+            points.append(CGPoint(x: x, y: y))
+            x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+            widest = max(widest, x - spacing)
+        }
+        return (points, widest, y + rowHeight)
+    }
+}
+
 /// Filled line chart for live samples. `values` oldest → newest.
 struct Sparkline: View {
     let values: [Double]
@@ -402,7 +439,7 @@ struct StatTile: View {
                 .lineLimit(1)
         }
         .padding(18)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .panel()
     }
 }
@@ -428,6 +465,7 @@ struct NavRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title).font(.system(size: 15, weight: .medium))
                         .foregroundStyle(Theme.textPrimary)
+                        .lineLimit(1)
                     Text(subtitle).font(.system(size: 12.5))
                         .foregroundStyle(Theme.textSecondary)
                         .lineLimit(1)

@@ -107,6 +107,27 @@ final class AppState: ObservableObject {
 
     func tasks(in tier: RiskTier) -> [CleanupTask] { tasks.filter { $0.tier == tier } }
 
+    /// Tick every cleaner of one tier that found something (and nothing else).
+    func selectTier(_ tier: RiskTier) {
+        guard !isBusy else { return }
+        selected = Set(tasks(in: tier).filter { size(of: $0) > 0 }.map(\.id))
+        if phase == .done { dismissDone() }
+    }
+
+    func toggle(_ task: CleanupTask) {
+        guard !isBusy, size(of: task) > 0 else { return }
+        if phase == .done { dismissDone() }
+        if selected.contains(task.id) { selected.remove(task.id) } else { selected.insert(task.id) }
+    }
+
+    /// Tick or untick a whole tier.
+    func toggle(_ tier: RiskTier) {
+        guard !isBusy else { return }
+        if phase == .done { dismissDone() }
+        let ids = Set(tasks(in: tier).filter { size(of: $0) > 0 }.map(\.id))
+        if ids.isSubset(of: selected) { selected.subtract(ids) } else { selected.formUnion(ids) }
+    }
+
     /// Everything a scan found, across the three tiers.
     var clearable: Int64 { totalJunk() }
 

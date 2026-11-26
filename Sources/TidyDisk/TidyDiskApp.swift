@@ -10,6 +10,10 @@ struct TidyDiskApp: App {
         if CommandLine.arguments.contains("--scan-notify") {
             HeadlessScan.runAndExit()
         }
+        // `TidyDisk --measure [folder]`: print where the space goes, no UI.
+        if CommandLine.arguments.contains("--measure") {
+            DiskReport.printAndExit()
+        }
     }
 
     var body: some Scene {

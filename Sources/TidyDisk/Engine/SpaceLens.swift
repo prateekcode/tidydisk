@@ -11,7 +11,7 @@ struct ProjectInfo: Identifiable {
     var artifactBytes: Int64 { artifacts.reduce(0) { $0 + $1.bytes } }
 }
 
-struct LargeFile: Identifiable {
+struct LargeFile: Identifiable, Codable {
     let path: String
     let bytes: Int64
     let modified: Date
@@ -91,28 +91,7 @@ extension Engine {
         project.artifacts.map { remove(path: $0.path) }
     }
 
-    // MARK: - Large files
-
-    static func findLargeFiles(minMB: Int = 200) -> [LargeFile] {
-        let home = NSHomeDirectory()
-        let (_, output) = run([
-            "find", home,
-            "(", "-path", home + "/Library", "-o", "-path", home + "/.Trash", ")", "-prune",
-            "-o", "-type", "f", "-size", "+\(minMB)M", "-print",
-        ])
-        let fm = FileManager.default
-        var files: [LargeFile] = []
-        for line in output.split(separator: "\n") {
-            let path = String(line)
-            guard let attrs = try? fm.attributesOfItem(atPath: path) else { continue }
-            files.append(LargeFile(
-                path: path,
-                bytes: (attrs[.size] as? Int64) ?? 0,
-                modified: (attrs[.modificationDate] as? Date) ?? .distantPast
-            ))
-        }
-        return files.sorted { $0.bytes > $1.bytes }
-    }
+    // MARK: - Trash
 
     /// Moves a file to Trash (recoverable, unlike the cache cleaners).
     static func trashFile(_ path: String) -> String {

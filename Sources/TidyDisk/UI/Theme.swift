@@ -1,27 +1,21 @@
 import SwiftUI
 
-/// TidyDisk's own purple look as design tokens. Every screen reads colours,
-/// type and spacing from here.
+/// Dark neutral surfaces with TidyDisk's purple as the one accent.
+/// Every screen reads colours, type and spacing from here.
 enum Theme {
-    // Brand purples (unchanged since 1.0)
-    static let deepPurple = Color(red: 0.10, green: 0.03, blue: 0.22)
-    static let purple = Color(red: 0.32, green: 0.12, blue: 0.55)
-    static let magenta = Color(red: 0.78, green: 0.25, blue: 0.95)
+    // Brand purples (unchanged since 1.0): the accent, never a background wash
     static let accent = Color(red: 0.65, green: 0.35, blue: 1.0)
+    static let magenta = Color(red: 0.78, green: 0.25, blue: 0.95)
 
-    /// Window background: the purple wash the app has always had.
-    static let backdrop = LinearGradient(colors: [deepPurple, purple, deepPurple.opacity(0.9)],
-                                         startPoint: .topLeading, endPoint: .bottomTrailing)
-    /// Solid stand-in for `backdrop` where a gradient cannot go (window backing).
-    static let bg = deepPurple
-
-    // Surfaces sit on the backdrop as white tints
-    static let bar = Color.black.opacity(0.22)
-    static let panel = Color.white.opacity(0.08)
-    static let raised = Color.white.opacity(0.06)
-    static let selected = Color.white.opacity(0.16)
-    static let line = Color.white.opacity(0.12)
-    static let track = Color.white.opacity(0.12)
+    // Surfaces: near-black with a trace of purple so the accent sits naturally
+    static let bg = Color(hex: 0x0D0C11)
+    static let backdrop = bg
+    static let bar = Color(hex: 0x15141A)
+    static let panel = Color(hex: 0x1A1920)
+    static let raised = Color(hex: 0x211F28)
+    static let selected = Color(hex: 0x34313F)
+    static let line = Color.white.opacity(0.08)
+    static let track = Color.white.opacity(0.10)
 
     // Signal colours
     static let gold = Color(red: 1.0, green: 0.78, blue: 0.28)
@@ -30,6 +24,8 @@ enum Theme {
     static let red = Color(red: 1.0, green: 0.35, blue: 0.40)
     static let blue = Color(red: 0.38, green: 0.62, blue: 1.0)
     static let violet = Color(red: 0.80, green: 0.62, blue: 1.0)
+    static let pink = Color(red: 1.0, green: 0.48, blue: 0.72)
+    static let teal = Color(red: 0.30, green: 0.82, blue: 0.86)
     static let gray = Color.white.opacity(0.55)
 
     // Text
@@ -70,7 +66,7 @@ extension Font {
     static let label = Font.system(size: 11.5, weight: .semibold)
 }
 
-/// White-tint surface with a hairline border: the only card style in the app.
+/// Flat surface with a hairline border: the only card style in the app.
 struct PanelStyle: ViewModifier {
     var radius: CGFloat = Theme.radius
     var fill: Color = Theme.panel

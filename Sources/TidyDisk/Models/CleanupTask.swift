@@ -7,11 +7,36 @@ enum RiskTier: Int, Comparable, CaseIterable {
 
     static func < (lhs: RiskTier, rhs: RiskTier) -> Bool { lhs.rawValue < rhs.rawValue }
 
-    var label: String {
+    var title: String {
         switch self {
-        case .safe: return "Safe"
-        case .aggressive: return "Aggressive"
-        case .nuclear: return "Nuclear"
+        case .safe: return "Safe to clean"
+        case .aggressive: return "Review before cleaning"
+        case .nuclear: return "Handle with care"
+        }
+    }
+
+    /// Short form for legends ("Review first 58.99 GB").
+    var shortTitle: String {
+        switch self {
+        case .safe: return "Safe to clean"
+        case .aggressive: return "Review first"
+        case .nuclear: return "Handle with care"
+        }
+    }
+
+    var blurb: String {
+        switch self {
+        case .safe: return "Rebuilt by the system or app when needed"
+        case .aggressive: return "Comes back on demand, but re-downloading or re-indexing takes time"
+        case .nuclear: return "Needs a reinstall before the project runs again"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .safe: return "checkmark.shield"
+        case .aggressive: return "eye"
+        case .nuclear: return "exclamationmark.triangle"
         }
     }
 }

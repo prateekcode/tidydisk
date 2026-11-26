@@ -1,4 +1,5 @@
 import Foundation
+import AppKit
 
 extension Notification.Name {
     /// Posted by `Engine.reportFreed`; AppState adds it to the lifetime counter.
@@ -10,6 +11,23 @@ extension Engine {
     /// everywhere and the "cleaned all time" counter.
     static func reportFreed(_ bytes: Int64) {
         NotificationCenter.default.post(name: .tidyDiskFreed, object: nil, userInfo: ["bytes": bytes])
+    }
+
+    /// "Prateek's MacBook Air"
+    static func machineName() -> String {
+        Host.current().localizedName ?? "This Mac"
+    }
+
+    /// "Macintosh HD"
+    static func volumeName() -> String {
+        let values = try? URL(fileURLWithPath: "/").resourceValues(forKeys: [.volumeLocalizedNameKey])
+        return values?.volumeLocalizedName ?? "Startup disk"
+    }
+
+    /// Opens System Settings on the Full Disk Access list.
+    static func openFullDiskAccessSettings() {
+        let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles")!
+        NSWorkspace.shared.open(url)
     }
 
     /// True when the app has Full Disk Access (reads protected folders without prompts).
@@ -36,6 +54,13 @@ final class ActivityLog: ObservableObject {
 }
 
 extension Format {
+    /// RAM sizes count in 1024s ("16 GB", not "17.18 GB").
+    static func memory(_ value: Int64) -> String {
+        let formatter = ByteCountFormatter()
+        formatter.countStyle = .memory
+        return value <= 0 ? "0 KB" : formatter.string(fromByteCount: value)
+    }
+
     /// "251,337"
     static func count(_ value: Int) -> String {
         value.formatted(.number.grouping(.automatic))
