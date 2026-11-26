@@ -175,7 +175,7 @@ private struct WindowChrome: NSViewRepresentable {
 
 // MARK: - Snapshot mode
 
-/// `TidyDisk --shot <tab> <out.png> [seconds] [--scan]` opens the app on that tab,
+/// `TidyDisk --shot <tab> <out.png> [seconds] [--scan] [--size WxH]` opens the app on that tab,
 /// waits for it to settle, writes the window to a PNG and quits. Used to check
 /// screens without Screen Recording permission.
 enum Snapshot {
@@ -194,7 +194,10 @@ enum Snapshot {
         let delay = args.count > flag + 3 ? Double(args[flag + 3]) ?? 3 : 3
         state.tab = tab
         if let window = NSApp.windows.first(where: { $0.canBecomeMain }) {
-            window.setContentSize(NSSize(width: 1180, height: 780))
+            // `--size 1444x846` checks a layout at another window size.
+            let size = (value(after: "--size") ?? "").split(separator: "x").compactMap { Double($0) }
+            window.setContentSize(size.count == 2 ? NSSize(width: size[0], height: size[1])
+                                                  : NSSize(width: 1180, height: 780))
         }
         // `--scan` fills the screens with a real scan first (and waits for it).
         if args.contains("--scan") {

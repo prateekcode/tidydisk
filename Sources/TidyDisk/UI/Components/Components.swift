@@ -453,6 +453,103 @@ struct StatTile: View {
     }
 }
 
+/// Panel with a label row on top and a hairline under it.
+struct LabeledPanel<Accessory: View, Content: View>: View {
+    let label: String
+    let icon: String
+    /// Take all the height the container offers (panels that sit side by side).
+    var fill = false
+    @ViewBuilder var accessory: () -> Accessory
+    @ViewBuilder var content: () -> Content
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                SectionLabel(label, icon: icon)
+                Spacer()
+                accessory()
+            }
+            .padding(.horizontal, 18)
+            .frame(height: 50)
+            Rule()
+            content()
+        }
+        .frame(maxWidth: .infinity, maxHeight: fill ? .infinity : nil, alignment: .top)
+        .panel()
+    }
+}
+
+extension LabeledPanel where Accessory == EmptyView {
+    init(label: String, icon: String, fill: Bool = false, @ViewBuilder content: @escaping () -> Content) {
+        self.init(label: label, icon: icon, fill: fill, accessory: { EmptyView() }, content: content)
+    }
+}
+
+/// One line of a settings panel: icon, title + explanation, and a control on the right.
+struct SettingRow<Control: View>: View {
+    let icon: String
+    var color: Color = Theme.accent
+    let title: String
+    let detail: String
+    @ViewBuilder var control: () -> Control
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(color)
+                .frame(width: 22)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(Theme.textPrimary)
+                Text(detail).font(.system(size: 12.5))
+                    .foregroundStyle(Theme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 12)
+            control()
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 12)
+    }
+}
+
+/// On/off switch in the accent colour.
+struct KitToggle: View {
+    @Binding var isOn: Bool
+
+    var body: some View {
+        Toggle("", isOn: $isOn)
+            .labelsHidden()
+            .toggleStyle(.switch)
+            .tint(Theme.accent)
+    }
+}
+
+/// Text-only action ("Expand all", "Create a token"); `accent` for links that leave the app.
+struct LinkButton: View {
+    let title: String
+    var icon: String?
+    var accent = false
+    let action: () -> Void
+
+    @Environment(\.isEnabled) private var isEnabled
+    @State private var hovering = false
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                if let icon { Image(systemName: icon).font(.system(size: 12, weight: .semibold)) }
+                Text(title).font(.system(size: 13, weight: .semibold)).lineLimit(1)
+            }
+            .foregroundStyle(!isEnabled ? Theme.textTertiary : (hovering || accent) ? Theme.accent : Theme.textPrimary)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering = $0 }
+    }
+}
+
 /// Tappable list row: icon, title + subtitle, trailing value, chevron.
 struct NavRow: View {
     let icon: String
@@ -460,6 +557,8 @@ struct NavRow: View {
     let title: String
     let subtitle: String
     let value: String
+    /// Share spare height with the rows around it (panels that stretch).
+    var fill = false
     let action: () -> Void
 
     @State private var hovering = false
@@ -488,6 +587,7 @@ struct NavRow: View {
             }
             .padding(.horizontal, 18)
             .padding(.vertical, 11)
+            .frame(maxHeight: fill ? .infinity : nil)
             .background(hovering ? Color.white.opacity(0.03) : .clear)
             .contentShape(Rectangle())
         }

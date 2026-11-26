@@ -62,6 +62,15 @@ final class DiskStore: ObservableObject {
         }
     }
 
+    /// Settings: drop the saved measurement (TidyDisk's own cache file only).
+    func forget() {
+        guard !measuring else { return }
+        index = nil
+        listings = [:]
+        selectedFiles = []
+        try? FileManager.default.removeItem(at: Self.cacheURL)
+    }
+
     private func save() {
         guard let index else { return }
         Task.detached(priority: .utility) {

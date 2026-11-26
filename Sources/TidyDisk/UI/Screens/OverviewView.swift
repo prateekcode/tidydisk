@@ -25,35 +25,27 @@ struct OverviewView: View {
                       kind: .primary) { scanAll() }
                 .disabled(isScanning || state.isBusy)
         } content: {
-            ScrollView {
-                VStack(spacing: Theme.gap) {
-                    SpaceCard()
-                    HStack(alignment: .top, spacing: Theme.gap) {
-                        CleanSummary()
-                        MonitorSummary()
-                        AISummary()
+            GeometryReader { viewport in
+                let extraRows = Self.insightRows(for: viewport.size.height)
+                ScrollView {
+                    VStack(spacing: Theme.gap) {
+                        SpaceCard()
+                        // Spare height goes here, so the page ends where the window does.
+                        HStack(alignment: .top, spacing: Theme.gap) {
+                            CleanSummary()
+                            MonitorSummary()
+                            AISummary()
+                        }
+                        .frame(minHeight: Self.summaryHeight, maxHeight: .infinity)
+                        if extraRows > 0 {
+                            Insights(rows: extraRows)
+                        }
+                        tiles
                     }
-                    .frame(height: 318)
-                    HStack(spacing: Theme.gap) {
-                        StatTile(label: "Cleaned all time", icon: "sparkles", color: Theme.green,
-                                 value: Format.bytes(state.cleanedAllTime),
-                                 detail: state.cleanUps == 1 ? "1 clean-up" : "\(state.cleanUps) clean-ups")
-                        StatTile(label: "Applications", icon: AppTab.apps.icon,
-                                 value: apps.scanned ? "\(apps.apps.count)" : "—",
-                                 detail: apps.apps.first.map { "Largest: \($0.name) (\(Format.bytes($0.bytes)))" }
-                                     ?? (apps.scanning ? "Sizing apps…" : "Not scanned yet"))
-                        StatTile(label: "Large files", icon: "doc.text", color: Theme.amber,
-                                 value: disk.index == nil ? "—" : Format.bytes(disk.largeFilesBytes),
-                                 detail: disk.index == nil ? "Not measured yet"
-                                     : "\(disk.largeFiles.count) over \(Format.bytes(disk.largeThreshold))")
-                        StatTile(label: "Trash", icon: "trash",
-                                 value: state.hasScanned ? Format.bytes(state.sizes["trash"] ?? 0) : "—",
-                                 detail: "Emptied with Safe to clean")
-                    }
-                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(minHeight: viewport.size.height)
                 }
+                .scrollIndicators(.never)
             }
-            .scrollIndicators(.never)
         }
         .onAppear {
             monitor.start()
@@ -65,6 +57,48 @@ struct OverviewView: View {
             }
         }
         .onDisappear { monitor.stop() }
+    }
+
+    // MARK: - Layout
+
+    private static let summaryHeight: CGFloat = 318
+    /// Space card, summaries and tiles at their smallest, with the gaps between them.
+    private static let baseHeight: CGFloat = 620
+
+    /// How many rows of the "largest" lists fit under the summaries; none on a small window.
+    private static func insightRows(for height: CGFloat) -> Int {
+        let room = height - baseHeight - Theme.gap - Insights.headerHeight
+        let rows = Int(room / RankRow.height)
+        return rows >= 3 ? min(rows, 6) : 0
+    }
+
+    private var largeFiles: (value: String, detail: String) {
+        guard let index = disk.index else { return ("—", "Not measured yet") }
+        if !disk.largeFiles.isEmpty {
+            return (Format.bytes(disk.largeFilesBytes),
+                    "\(disk.largeFiles.count) over \(Format.bytes(disk.largeThreshold))")
+        }
+        // Nothing over the chosen size: say what the biggest file is instead of "0".
+        guard let biggest = index.largeFiles.first else { return ("None", "No file over 100 MB") }
+        return (Format.bytes(biggest.bytes), "Largest file; none over \(Format.bytes(disk.largeThreshold))")
+    }
+
+    private var tiles: some View {
+        HStack(spacing: Theme.gap) {
+            StatTile(label: "Cleaned all time", icon: "sparkles", color: Theme.green,
+                     value: Format.bytes(state.cleanedAllTime),
+                     detail: state.cleanUps == 1 ? "1 clean-up" : "\(state.cleanUps) clean-ups")
+            StatTile(label: "Applications", icon: AppTab.apps.icon,
+                     value: apps.scanned ? "\(apps.apps.count)" : "—",
+                     detail: apps.apps.first.map { "Largest: \($0.name) (\(Format.bytes($0.bytes)))" }
+                         ?? (apps.scanning ? "Sizing apps…" : "Not scanned yet"))
+            StatTile(label: "Large files", icon: "doc.text", color: Theme.amber,
+                     value: largeFiles.value, detail: largeFiles.detail)
+            StatTile(label: "Trash", icon: "trash",
+                     value: state.hasScanned ? Format.bytes(state.sizes["trash"] ?? 0) : "—",
+                     detail: "Emptied with Safe to clean")
+        }
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     private func scanAll() {
@@ -140,35 +174,11 @@ private struct SpaceCard: View {
 
 // MARK: - Summary panels
 
-/// Panel with a label row on top; the three summaries share this frame.
-private struct SummaryPanel<Accessory: View, Content: View>: View {
-    let label: String
-    let icon: String
-    @ViewBuilder var accessory: () -> Accessory
-    @ViewBuilder var content: () -> Content
-
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                SectionLabel(label, icon: icon)
-                Spacer()
-                accessory()
-            }
-            .padding(.horizontal, 18)
-            .frame(height: 50)
-            Rule()
-            content()
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .panel()
-    }
-}
-
 private struct CleanSummary: View {
     @EnvironmentObject var state: AppState
 
     var body: some View {
-        SummaryPanel(label: "Clean", icon: AppTab.clean.icon) {
+        LabeledPanel(label: "Clean", icon: AppTab.clean.icon, fill: true) {
             Text(state.hasScanned ? Format.bytes(state.clearable) : "—")
                 .font(.system(size: 15, weight: .bold))
                 .foregroundStyle(Theme.textPrimary)
@@ -178,12 +188,12 @@ private struct CleanSummary: View {
                 NavRow(icon: tier.icon, color: Theme.tierColor(tier), title: tier.title,
                        subtitle: state.hasScanned
                            ? (found.count == 1 ? "1 place" : "\(found.count) places") : tier.blurb,
-                       value: state.hasScanned ? Format.bytes(state.totalJunk(tier: tier)) : "—") {
+                       value: state.hasScanned ? Format.bytes(state.totalJunk(tier: tier)) : "—",
+                       fill: true) {
                     state.tab = .clean
                 }
                 Rule()
             }
-            Spacer(minLength: 0)
             KitButton(state.hasScanned
                       ? "Review and clean \(Format.bytes(state.totalJunk(tier: .safe)))" : "Scan this Mac",
                       kind: .primary, fill: true) {
@@ -241,7 +251,7 @@ private struct MonitorSummary: View {
     }
 
     var body: some View {
-        SummaryPanel(label: "Monitor", icon: "cpu") {
+        LabeledPanel(label: "Monitor", icon: "cpu", fill: true) {
             Badge(healthBadge.0, color: healthBadge.1)
         } content: {
             Button { state.tab = .monitor } label: {
@@ -279,7 +289,8 @@ private struct MonitorSummary: View {
                             .foregroundStyle(Theme.textSecondary)
                             .lineLimit(2)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(height: 65)
                     .padding(.horizontal, 18)
                 }
                 .contentShape(Rectangle())
@@ -307,7 +318,7 @@ private struct MonitorSummary: View {
             }
             .padding(.horizontal, 18)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .frame(height: 100)
+            .frame(minHeight: 100, maxHeight: .infinity)
         }
     }
 }
@@ -324,25 +335,127 @@ private struct AISummary: View {
     }
 
     var body: some View {
-        SummaryPanel(label: "AI on this Mac", icon: AppTab.ai.icon) {
+        LabeledPanel(label: "AI on this Mac", icon: AppTab.ai.icon, fill: true) {
             if let gpu = monitor.gpu { Badge("GPU \(Format.percent(gpu))", color: Theme.violet) }
         } content: {
             NavRow(icon: "brain", color: Theme.violet, title: "AI data on disk",
                    subtitle: ai.diskScanning ? "Sizing…"
                        : names(ai.diskToolNames, empty: ai.diskScanned ? "No AI tools found" : "Not scanned yet"),
-                   value: ai.diskScanned ? Format.bytes(ai.diskBytes) : "—") { state.tab = .ai }
+                   value: ai.diskScanned ? Format.bytes(ai.diskBytes) : "—", fill: true) { state.tab = .ai }
             Rule()
             NavRow(icon: "memorychip", color: Theme.violet, title: "AI apps in memory now",
                    subtitle: names(ai.runningNames, empty: "None running"),
-                   value: Format.memory(ai.memoryBytes)) { state.tab = .ai }
+                   value: Format.memory(ai.memoryBytes), fill: true) { state.tab = .ai }
             Rule()
             NavRow(icon: "dot.radiowaves.left.and.right", color: Theme.violet,
                    title: "Local AI servers",
                    subtitle: names(ai.serverLabels, empty: "None"),
-                   value: "\(ai.serverLabels.count)") { state.tab = .ai }
+                   value: "\(ai.serverLabels.count)", fill: true) { state.tab = .ai }
             Rule()
-            Spacer(minLength: 0)
             KitButton("Open AI usage", fill: true) { state.tab = .ai }.padding(14)
+        }
+    }
+}
+
+// MARK: - Largest things (shown when the window has room)
+
+/// One line of a ranked list: colour mark, name, share bar, size.
+private struct RankRow: View {
+    static let height: CGFloat = 34
+
+    let color: Color
+    let title: String
+    let bytes: Int64
+    /// 0...1 of the list's largest entry.
+    let share: Double
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Circle().fill(color).frame(width: 8, height: 8)
+            Text(title)
+                .font(.system(size: 13.5, weight: .medium))
+                .foregroundStyle(Theme.textPrimary)
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Meter(value: share, color: color).frame(width: 70)
+            Text(Format.bytes(bytes))
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(Theme.textSecondary)
+                .monospacedDigit()
+                .frame(width: 78, alignment: .trailing)
+        }
+        .padding(.horizontal, 18)
+        .frame(height: Self.height)
+    }
+}
+
+private struct Insights: View {
+    static let headerHeight: CGFloat = 51
+
+    @EnvironmentObject var state: AppState
+    @EnvironmentObject var disk: DiskStore
+    @EnvironmentObject var apps: AppsStore
+    let rows: Int
+
+    private struct Entry: Identifiable {
+        let id: String
+        let title: String
+        let bytes: Int64
+        let color: Color
+    }
+
+    private var places: [Entry] {
+        guard let index = disk.index else { return [] }
+        return DiskKind.allCases
+            .map { Entry(id: "\($0.rawValue)", title: $0.title, bytes: index.stat($0).bytes, color: $0.color) }
+            .filter { $0.bytes > 0 }
+            .sorted { $0.bytes > $1.bytes }
+    }
+
+    private var largestApps: [Entry] {
+        apps.apps.map { Entry(id: $0.id, title: $0.name, bytes: $0.bytes, color: Theme.accent) }
+    }
+
+    private var largestFiles: [Entry] {
+        (disk.index?.largeFiles ?? []).map {
+            Entry(id: $0.path, title: $0.name, bytes: $0.bytes, color: Theme.amber)
+        }
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: Theme.gap) {
+            list("Where the space is", icon: AppTab.disk.icon, entries: places, tab: .disk,
+                 empty: disk.measuring ? "Measuring the disk…" : "Scan this Mac to see where the space went.")
+            list("Largest apps", icon: AppTab.apps.icon, entries: largestApps, tab: .apps,
+                 empty: apps.scanning ? "Sizing apps…" : "Scan this Mac to size your apps.")
+            list("Largest files", icon: AppTab.largeFiles.icon, entries: largestFiles, tab: .largeFiles,
+                 empty: disk.index == nil ? "Scan this Mac to find large files." : "No file over 100 MB.")
+        }
+        .frame(height: Self.headerHeight + CGFloat(rows) * RankRow.height + 8)
+    }
+
+    private func list(_ label: String, icon: String, entries: [Entry], tab: AppTab,
+                      empty: String) -> some View {
+        let shown = Array(entries.prefix(rows))
+        let top = Double(max(shown.first?.bytes ?? 1, 1))
+        return LabeledPanel(label: label, icon: icon, fill: true) {
+            LinkButton(title: "Open") { state.tab = tab }
+        } content: {
+            if shown.isEmpty {
+                Text(empty)
+                    .font(.system(size: 13))
+                    .foregroundStyle(Theme.textSecondary)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(shown) { entry in
+                        RankRow(color: entry.color, title: entry.title, bytes: entry.bytes,
+                                share: Double(entry.bytes) / top)
+                    }
+                }
+                .padding(.top, 4)
+            }
         }
     }
 }

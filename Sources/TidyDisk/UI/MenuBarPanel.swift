@@ -3,12 +3,15 @@ import AppKit
 
 struct MenuBarLabel: View {
     @EnvironmentObject var state: AppState
+    @AppStorage(Preferences.menuBarShowsFreeSpace) private var showsFreeSpace = true
 
     var body: some View {
         // Menu bar renders this as template image + text
         Image(systemName: "bubbles.and.sparkles.fill")
-        Text(Format.wholeGB(state.freeSpace))
-            .monospacedDigit()
+        if showsFreeSpace {
+            Text(Format.wholeGB(state.freeSpace))
+                .monospacedDigit()
+        }
     }
 }
 

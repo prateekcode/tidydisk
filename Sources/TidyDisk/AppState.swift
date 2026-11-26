@@ -25,7 +25,9 @@ final class AppState: ObservableObject {
     }
 
     @Published var phase: AppPhase = .idle
-    @Published var tab: AppTab = .overview
+    @Published var tab: AppTab = .overview {
+        didSet { UsageStats.screen(tab.rawValue) }
+    }
 
     // Feature stores: each tab owns its data, the shell injects them.
     let disk = DiskStore()
@@ -73,6 +75,8 @@ final class AppState: ObservableObject {
         freeSpaceTimer = timer
 
         restoreLastScan()
+        UsageStats.opened()
+        UsageStats.screen(tab.rawValue)
         // Any store that frees space reports it here (Engine.reportFreed).
         NotificationCenter.default.addObserver(forName: .tidyDiskFreed, object: nil, queue: .main) {
             [weak self] note in
@@ -100,7 +104,10 @@ final class AppState: ObservableObject {
         refreshFreeSpace()
         guard bytes > 0 else { return }
         cleanedAllTime += bytes
-        if countsAsCleanUp { cleanUps += 1 }
+        if countsAsCleanUp {
+            cleanUps += 1
+            UsageStats.cleanCompleted(freed: bytes)
+        }
         UserDefaults.standard.set(Double(cleanedAllTime), forKey: Keys.cleanedBytes)
         UserDefaults.standard.set(cleanUps, forKey: Keys.cleanUps)
     }
@@ -154,6 +161,7 @@ final class AppState: ObservableObject {
         runStatus = [:]
         scannedCount = 0
         appendLog("— Scan started —")
+        let started = Date()
 
         Task {
             // Re-discover projects first so projectSweep tasks see the current Mac.
@@ -176,6 +184,7 @@ final class AppState: ObservableObject {
             hasScanned = true
             lastScan = Date()
             persistScan()
+            UsageStats.scanCompleted(seconds: Date().timeIntervalSince(started), clearable: totalJunk())
             appendLog("— Scan finished: \(Format.bytes(totalJunk())) of junk found —")
             withAnimation(.easeOut(duration: 0.2)) { phase = .review }
         }
@@ -547,6 +556,29 @@ final class AppState: ObservableObject {
         let now = Engine.freeDiskSpace()
         // Publish only real changes so the menu-bar label is not redrawn every tick.
         if now != freeSpace { freeSpace = now }
+    }
+
+    // MARK: - Saved data (Settings)
+
+    func resetCleanedCounter() {
+        cleanedAllTime = 0
+        cleanUps = 0
+        UserDefaults.standard.removeObject(forKey: Keys.cleanedBytes)
+        UserDefaults.standard.removeObject(forKey: Keys.cleanUps)
+    }
+
+    /// Drops the saved scan and disk measurement; nothing on disk is touched besides TidyDisk's own cache.
+    func forgetSavedScan() {
+        guard !isBusy else { return }
+        sizes = [:]
+        selected = []
+        runStatus = [:]
+        hasScanned = false
+        lastScan = nil
+        phase = .idle
+        UserDefaults.standard.removeObject(forKey: Keys.sizes)
+        UserDefaults.standard.removeObject(forKey: Keys.scanDate)
+        disk.forget()
     }
 
     /// Leave the "done" banner and go back to the review list.

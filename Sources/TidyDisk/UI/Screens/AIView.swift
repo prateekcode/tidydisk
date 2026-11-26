@@ -548,29 +548,6 @@ private struct ServerRow: View {
 
 // MARK: - Pieces the kit does not have
 
-/// Text-only action in a panel header ("Expand all").
-private struct LinkButton: View {
-    let title: String
-    var icon: String?
-    let action: () -> Void
-
-    @Environment(\.isEnabled) private var isEnabled
-    @State private var hovering = false
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 6) {
-                if let icon { Image(systemName: icon).font(.system(size: 12, weight: .semibold)) }
-                Text(title).font(.system(size: 13, weight: .semibold)).lineLimit(1)
-            }
-            .foregroundStyle(!isEnabled ? Theme.textTertiary : hovering ? Theme.accent : Theme.textPrimary)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .onHover { hovering = $0 }
-    }
-}
-
 private struct SearchField: View {
     @Binding var text: String
     let prompt: String
