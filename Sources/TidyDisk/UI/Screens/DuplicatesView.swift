@@ -6,67 +6,48 @@ struct DuplicatesView: View {
 
     private var wastedTotal: Int64 { state.dupGroups.reduce(0) { $0 + $1.wastedBytes } }
 
-    var body: some View {
-        VStack(spacing: 0) {
-            VStack(spacing: 6) {
-                Text("Duplicates")
-                    .font(.system(size: 30, weight: .bold))
-                    .foregroundStyle(Theme.textPrimary)
-                Text(state.dupScanned && !state.dupGroups.isEmpty
-                     ? "\(Format.bytes(wastedTotal)) wasted on copies in Downloads & Desktop"
-                     : "Identical files in Downloads & Desktop — keep one, trash the rest")
-                    .font(.title3)
-                    .foregroundStyle(Theme.textSecondary)
-            }
-            .padding(.top, 40)
-            .padding(.bottom, 16)
+    private var subtitle: String {
+        state.dupScanned && !state.dupGroups.isEmpty
+            ? "\(Format.bytes(wastedTotal)) taken by copies in Downloads and Desktop"
+            : "Identical files in Downloads and Desktop: keep one, trash the rest"
+    }
 
-            if state.dupScanning {
-                Spacer()
-                ProgressView().controlSize(.large).tint(.white)
-                Text("Comparing files…")
-                    .foregroundStyle(Theme.textSecondary)
-                    .padding(.top, 12)
-                Spacer()
-            } else if !state.dupScanned {
-                Spacer()
-                PillButton(title: "Find Duplicates", prominent: true) { state.scanDuplicates() }
-                Spacer()
-            } else if state.dupGroups.isEmpty {
-                Spacer()
-                Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: 44))
-                    .foregroundStyle(Theme.tierColor(.safe))
-                Text("No duplicates — tidy!")
-                    .font(.title3)
-                    .foregroundStyle(Theme.textSecondary)
-                    .padding(.top, 10)
-                Spacer()
-                PillButton(title: "Rescan") { state.scanDuplicates() }
-                    .padding(.bottom, 24)
+    var body: some View {
+        Page(icon: AppTab.duplicates.icon, title: "Duplicates", subtitle: subtitle) {
+            if state.dupScanning { BusyLabel(text: "Comparing files…") }
+            KitButton(state.dupScanned ? "Scan again" : "Find duplicates", icon: "arrow.clockwise",
+                      kind: state.dupScanned ? .secondary : .primary) { state.scanDuplicates() }
+                .disabled(state.dupScanning)
+        } content: {
+            if state.dupGroups.isEmpty {
+                EmptyState(icon: state.dupScanned ? "checkmark.seal" : AppTab.duplicates.icon,
+                           title: state.dupScanning ? "Comparing files…"
+                               : state.dupScanned ? "No duplicates" : "Not scanned yet",
+                           message: "Files are matched by content, not by name. The newest copy is kept by default.")
+                    .panel()
             } else {
-                ScrollView {
-                    VStack(spacing: 10) {
-                        ForEach(state.dupGroups) { group in
-                            DuplicateGroupCard(group: group)
+                VStack(spacing: 0) {
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            ForEach(state.dupGroups) { group in
+                                DuplicateGroupCard(group: group)
+                                Rule()
+                            }
                         }
                     }
-                    .padding(24)
-                }
-                HStack(spacing: 14) {
-                    PillButton(title: "Rescan") { state.scanDuplicates() }
-                    Spacer()
-                    if !state.selectedDups.isEmpty {
-                        Text(Format.bytes(state.selectedDupBytes))
-                            .font(.callout.weight(.semibold))
+                    Rule()
+                    HStack(spacing: 14) {
+                        Text(state.selectedDups.isEmpty ? "Tick the copies to remove"
+                             : "\(state.selectedDups.count) selected · \(Format.bytes(state.selectedDupBytes))")
+                            .font(.system(size: 13))
                             .foregroundStyle(Theme.textSecondary)
-                        PillButton(title: "Move \(state.selectedDups.count) to Trash", prominent: true) {
-                            state.trashSelectedDups()
-                        }
+                        Spacer()
+                        KitButton("Move to Trash", icon: "trash", kind: .primary) { state.trashSelectedDups() }
+                            .disabled(state.selectedDups.isEmpty)
                     }
+                    .padding(14)
                 }
-                .padding(.horizontal, 30)
-                .padding(.bottom, 24)
+                .panel()
             }
         }
     }
@@ -80,7 +61,7 @@ struct DuplicateGroupCard: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Image(systemName: "doc.on.doc.fill")
-                    .foregroundStyle(Theme.magenta)
+                    .foregroundStyle(Theme.accent)
                 Text(group.files.first?.name ?? "")
                     .font(.headline)
                     .foregroundStyle(Theme.textPrimary)
@@ -94,9 +75,8 @@ struct DuplicateGroupCard: View {
                 DuplicateFileRow(file: file, isKeeper: index == 0)
             }
         }
-        .padding(14)
-        .glassCard(cornerRadius: 14)
-        .frame(maxWidth: 640)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 13)
     }
 }
 
@@ -114,18 +94,13 @@ struct DuplicateFileRow: View {
             }
         } label: {
             HStack(spacing: 10) {
-                CheckCircle(isOn: isOn)
+                CheckBox(isOn: isOn)
                 Text(Engine.abbreviate(file.path))
                     .font(.caption)
                     .foregroundStyle(Theme.textSecondary)
                     .lineLimit(1)
                 if isKeeper {
-                    Text("newest")
-                        .font(.caption2.weight(.bold))
-                        .foregroundStyle(Theme.tierColor(.safe))
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Capsule().fill(Theme.tierColor(.safe).opacity(0.16)))
+                    Badge("newest", color: Theme.green)
                 }
                 Spacer()
                 Text(file.modified, format: .dateTime.day().month().year())

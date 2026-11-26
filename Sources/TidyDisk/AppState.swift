@@ -2,21 +2,12 @@ import SwiftUI
 import UserNotifications
 
 enum AppPhase: Equatable {
-    case welcome
+    /// Nothing scanned yet (first launch).
+    case idle
     case scanning
     case review
     case cleaning
     case done
-}
-
-enum SidebarItem: Hashable {
-    case smartScan
-    case projects
-    case largeFiles
-    case duplicates
-    case category(TaskCategory)
-    case settings
-    case log
 }
 
 @MainActor
@@ -33,21 +24,91 @@ final class AppState: ObservableObject {
         tasks.filter { $0.category == category }
     }
 
-    @Published var phase: AppPhase = .welcome
-    @Published var sidebar: SidebarItem = .smartScan
+    @Published var phase: AppPhase = .idle
+    @Published var tab: AppTab = .overview
+
+    // Feature stores: each tab owns its data, the shell injects them.
+    let disk = DiskStore()
+    let apps = AppsStore()
+    let ai = AIStore()
+    let monitor = MonitorStore()
 
     @Published var sizes: [String: Int64] = [:]
     @Published var scannedCount = 0
     @Published var scanningTaskName = ""
     @Published var hasScanned = false
+    /// When the sizes on screen were measured (restored from the last run at launch).
+    @Published var lastScan: Date?
+
+    /// Lifetime counters shown in the top bar and on Overview.
+    @Published var cleanedAllTime = Int64(UserDefaults.standard.double(forKey: Keys.cleanedBytes))
+    @Published var cleanUps = UserDefaults.standard.integer(forKey: Keys.cleanUps)
+
+    private enum Keys {
+        static let cleanedBytes = "cleanedAllTimeBytes"
+        static let cleanUps = "cleanUps"
+        static let sizes = "lastScanSizes"
+        static let scanDate = "lastScanDate"
+    }
 
     @Published var selected: Set<String> = []
     @Published var runStatus: [String: TaskRunStatus] = [:]
     @Published var freedTotal: Int64 = 0
-    @Published var log: [String] = []
 
     @Published var freeSpace: Int64 = Engine.freeDiskSpace()
     let totalSpace: Int64 = Engine.totalDiskSpace()
+
+    /// Keeps the menu-bar number live: free space changes when *other* apps
+    /// write or delete, so it is re-read on a timer, not only after our own cleans.
+    private var freeSpaceTimer: Timer?
+    static let freeSpaceInterval: TimeInterval = 5
+
+    init() {
+        let timer = Timer(timeInterval: Self.freeSpaceInterval, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated { self?.refreshFreeSpace() }
+        }
+        timer.tolerance = 1
+        // .common: keeps firing while a menu or the menu-bar panel is tracking.
+        RunLoop.main.add(timer, forMode: .common)
+        freeSpaceTimer = timer
+
+        restoreLastScan()
+        // Any store that frees space reports it here (Engine.reportFreed).
+        NotificationCenter.default.addObserver(forName: .tidyDiskFreed, object: nil, queue: .main) {
+            [weak self] note in
+            let bytes = (note.userInfo?["bytes"] as? Int64) ?? 0
+            MainActor.assumeIsolated { self?.recordFreed(bytes, countsAsCleanUp: true) }
+        }
+    }
+
+    private func restoreLastScan() {
+        let defaults = UserDefaults.standard
+        guard let saved = defaults.dictionary(forKey: Keys.sizes) as? [String: Double],
+              let date = defaults.object(forKey: Keys.scanDate) as? Date else { return }
+        sizes = saved.mapValues { Int64($0) }
+        lastScan = date
+        hasScanned = true
+        phase = .review
+    }
+
+    private func persistScan() {
+        UserDefaults.standard.set(sizes.mapValues { Double($0) }, forKey: Keys.sizes)
+        UserDefaults.standard.set(lastScan, forKey: Keys.scanDate)
+    }
+
+    func recordFreed(_ bytes: Int64, countsAsCleanUp: Bool) {
+        refreshFreeSpace()
+        guard bytes > 0 else { return }
+        cleanedAllTime += bytes
+        if countsAsCleanUp { cleanUps += 1 }
+        UserDefaults.standard.set(Double(cleanedAllTime), forKey: Keys.cleanedBytes)
+        UserDefaults.standard.set(cleanUps, forKey: Keys.cleanUps)
+    }
+
+    func tasks(in tier: RiskTier) -> [CleanupTask] { tasks.filter { $0.tier == tier } }
+
+    /// Everything a scan found, across the three tiers.
+    var clearable: Int64 { totalJunk() }
 
     var isBusy: Bool { phase == .scanning || phase == .cleaning }
 
@@ -66,11 +127,10 @@ final class AppState: ObservableObject {
 
     func startScan() {
         guard !isBusy else { return }
-        withAnimation(.spring(duration: 0.5)) {
-            sidebar = .smartScan
-            phase = .scanning
-        }
+        withAnimation(.easeOut(duration: 0.2)) { phase = .scanning }
         sizes = [:]
+        selected = []
+        runStatus = [:]
         scannedCount = 0
         appendLog("— Scan started —")
 
@@ -93,10 +153,10 @@ final class AppState: ObservableObject {
                 appendLog("[scan] \(task.name): \(Format.bytes(size))")
             }
             hasScanned = true
-            // Pre-select the safe tier, like running cleanup.sh with no flags.
-            selected = Set(tasks.filter { $0.tier == .safe && size(of: $0) > 0 }.map(\.id))
+            lastScan = Date()
+            persistScan()
             appendLog("— Scan finished: \(Format.bytes(totalJunk())) of junk found —")
-            withAnimation(.spring(duration: 0.5)) { phase = .review }
+            withAnimation(.easeOut(duration: 0.2)) { phase = .review }
         }
     }
 
@@ -107,13 +167,12 @@ final class AppState: ObservableObject {
         if let taskIDs { selected = taskIDs }
         guard !selected.isEmpty else { return }
 
-        sidebar = .smartScan
         runStatus = tasks.reduce(into: [:]) { result, task in
             if selected.contains(task.id) { result[task.id] = .pending }
         }
         freedTotal = 0
         appendLog("— Cleanup started —")
-        withAnimation(.spring(duration: 0.5)) { phase = .cleaning }
+        withAnimation(.easeOut(duration: 0.2)) { phase = .cleaning }
 
         Task {
             for task in tasks where selected.contains(task.id) {
@@ -132,10 +191,11 @@ final class AppState: ObservableObject {
                     freedTotal += freed
                 }
             }
-            freeSpace = Engine.freeDiskSpace()
+            recordFreed(freedTotal, countsAsCleanUp: true)
+            selected = []
+            persistScan()
             appendLog("— Cleanup finished: \(Format.bytes(freedTotal)) freed · \(Format.bytes(freeSpace)) now free —")
-            try? await Task.sleep(for: .seconds(0.6))
-            withAnimation(.spring(duration: 0.6)) { phase = .done }
+            withAnimation(.easeOut(duration: 0.3)) { phase = .done }
         }
     }
 
@@ -183,7 +243,7 @@ final class AppState: ObservableObject {
                 }
                 projectCleaning.remove(project.path)
             }
-            freeSpace = Engine.freeDiskSpace()
+            refreshFreeSpace()
         }
     }
 
@@ -256,53 +316,7 @@ final class AppState: ObservableObject {
             withAnimation(.spring(duration: 0.35)) {
                 projects.removeAll { $0.path == project.path }
             }
-            freeSpace = Engine.freeDiskSpace()
-        }
-    }
-
-    // MARK: - Large files
-
-    @Published var largeFiles: [LargeFile] = []
-    @Published var largeFilesScanning = false
-    @Published var largeFilesScanned = false
-    @Published var selectedFiles: Set<String> = []
-
-    func scanLargeFiles() {
-        guard !largeFilesScanning else { return }
-        largeFilesScanning = true
-        selectedFiles = []
-        Task {
-            let files = await Task.detached(priority: .userInitiated) {
-                Engine.findLargeFiles()
-            }.value
-            withAnimation(.spring(duration: 0.4)) {
-                largeFiles = files
-                largeFilesScanning = false
-                largeFilesScanned = true
-            }
-        }
-    }
-
-    var selectedFilesBytes: Int64 {
-        largeFiles.filter { selectedFiles.contains($0.path) }.reduce(0) { $0 + $1.bytes }
-    }
-
-    func trashSelectedFiles() {
-        let picked = largeFiles.filter { selectedFiles.contains($0.path) }
-        guard !picked.isEmpty else { return }
-        appendLog("— Moving \(picked.count) large files to Trash —")
-        Task {
-            for file in picked {
-                let line = await Task.detached { Engine.trashFile(file.path) }.value
-                appendLog("    " + line)
-                if line.hasPrefix("[trash]") {
-                    withAnimation(.spring(duration: 0.3)) {
-                        largeFiles.removeAll { $0.path == file.path }
-                        selectedFiles.remove(file.path)
-                    }
-                }
-            }
-            freeSpace = Engine.freeDiskSpace()
+            refreshFreeSpace()
         }
     }
 
@@ -353,7 +367,7 @@ final class AppState: ObservableObject {
                 }
                 selectedDups.subtract(trashed)
             }
-            freeSpace = Engine.freeDiskSpace()
+            refreshFreeSpace()
         }
     }
 
@@ -509,21 +523,22 @@ final class AppState: ObservableObject {
     }
 
     func refreshFreeSpace() {
-        freeSpace = Engine.freeDiskSpace()
+        let now = Engine.freeDiskSpace()
+        // Publish only real changes so the menu-bar label is not redrawn every tick.
+        if now != freeSpace { freeSpace = now }
     }
 
-    func reset() {
-        withAnimation(.spring(duration: 0.5)) {
-            phase = .welcome
-            sidebar = .smartScan
-        }
-        selected = []
+    /// Leave the "done" banner and go back to the review list.
+    func dismissDone() {
         runStatus = [:]
-        freeSpace = Engine.freeDiskSpace()
+        withAnimation(.easeOut(duration: 0.2)) { phase = hasScanned ? .review : .idle }
     }
 
-    private func appendLog(_ line: String) {
-        log.append(line)
-        if log.count > 2000 { log.removeFirst(log.count - 2000) }
+    /// One button for "look at this Mac again": junk sizes and the disk breakdown.
+    func scanEverything() {
+        startScan()
+        disk.measure()
     }
+
+    private func appendLog(_ line: String) { ActivityLog.shared.add(line) }
 }

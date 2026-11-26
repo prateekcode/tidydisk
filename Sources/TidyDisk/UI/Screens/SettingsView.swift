@@ -5,24 +5,15 @@ struct SettingsView: View {
     @EnvironmentObject var state: AppState
 
     var body: some View {
-        VStack(spacing: 0) {
-            VStack(spacing: 6) {
-                Text("Settings")
-                    .font(.system(size: 30, weight: .bold))
-                    .foregroundStyle(Theme.textPrimary)
-                Text("Connections used by Space Lens project actions")
-                    .font(.title3)
-                    .foregroundStyle(Theme.textSecondary)
-            }
-            .padding(.top, 40)
-            .padding(.bottom, 16)
-
+        Page(icon: AppTab.settings.icon, title: "Settings",
+             subtitle: "Connections used by the Projects tab") {
+            EmptyView()
+        } content: {
             ScrollView {
-                VStack(spacing: 14) {
+                VStack(spacing: Theme.gap) {
                     GitHubCard()
                     DestinationsCard()
                 }
-                .padding(24)
             }
         }
         .onAppear { state.checkGitHubConnection() }
@@ -45,7 +36,7 @@ private struct GitHubCard: View {
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
                 if state.githubChecking {
-                    ProgressView().controlSize(.small).tint(.white)
+                    ProgressView().controlSize(.small)
                 } else if let login = state.githubLogin {
                     Label("\(login)\(state.githubUsesToken ? "" : " (gh CLI)")",
                           systemImage: "checkmark.circle.fill")
@@ -73,7 +64,7 @@ private struct GitHubCard: View {
                         .textFieldStyle(.roundedBorder)
                         .frame(maxWidth: 340)
                         .onSubmit { state.connectGitHub(token: tokenField) }
-                    PillButton(title: "Connect") { state.connectGitHub(token: tokenField) }
+                    KitButton("Connect") { state.connectGitHub(token: tokenField) }
                 }
                 Button("Create a token on github.com ↗") {
                     NSWorkspace.shared.open(URL(string:
@@ -91,8 +82,7 @@ private struct GitHubCard: View {
             }
         }
         .padding(16)
-        .glassCard(cornerRadius: 14)
-        .frame(maxWidth: 640)
+        .panel()
     }
 }
 
@@ -110,7 +100,7 @@ private struct DestinationsCard: View {
                     .font(.headline)
                     .foregroundStyle(Theme.textPrimary)
                 Spacer()
-                PillButton(title: "Add Folder…") { addFolder() }
+                KitButton("Add Folder…") { addFolder() }
             }
 
             Text("\"Archive to…\" zips a project into these folders. macOS asks for permission on first write — use Test access to trigger the prompt, and grant it.")
@@ -137,8 +127,7 @@ private struct DestinationsCard: View {
             .foregroundStyle(Theme.accent)
         }
         .padding(16)
-        .glassCard(cornerRadius: 14)
-        .frame(maxWidth: 640)
+        .panel()
     }
 
     private func addFolder() {

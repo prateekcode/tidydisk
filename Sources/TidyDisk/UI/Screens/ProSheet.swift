@@ -47,9 +47,9 @@ struct ProSheet: View {
                                   text: "Lifetime updates, no subscription")
                 }
                 .padding(16)
-                .glassCard(cornerRadius: 14)
+                .panel()
 
-                GlowButton(title: "Buy TidyDisk Pro — \(ProConfig.price)") {
+                KitButton("Buy TidyDisk Pro — \(ProConfig.price)", kind: .gold) {
                     if let url = URL(string: ProConfig.checkoutURL) {
                         NSWorkspace.shared.open(url)
                     }
@@ -67,7 +67,7 @@ struct ProSheet: View {
                         if state.licenseActivating {
                             ProgressView().controlSize(.small).tint(.white)
                         } else {
-                            PillButton(title: "Activate") { state.activateLicense(keyField) }
+                            KitButton("Activate") { state.activateLicense(keyField) }
                         }
                     }
                     if let error = state.licenseError {
@@ -88,7 +88,7 @@ struct ProSheet: View {
         }
         .padding(.horizontal, 34)
         .frame(width: 440)
-        .background(Theme.background(for: .welcome).ignoresSafeArea())
+        .background(Theme.bg.ignoresSafeArea())
         .preferredColorScheme(.dark)
     }
 }

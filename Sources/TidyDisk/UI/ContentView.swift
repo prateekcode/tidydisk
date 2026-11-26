@@ -1,182 +1,205 @@
 import SwiftUI
+import AppKit
 
+/// The window: top tab bar, then the selected screen.
 struct ContentView: View {
     @EnvironmentObject var state: AppState
 
     var body: some View {
-        ZStack {
-            Theme.background(for: state.phase)
-                .ignoresSafeArea()
-                .animation(.easeInOut(duration: 0.8), value: state.phase)
-
-            HStack(spacing: 0) {
-                SidebarView()
-                mainContent
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
+        VStack(spacing: 0) {
+            TopBar()
+            screen
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(minWidth: 1000, minHeight: 660)
+        .background(Theme.bg)
+        .ignoresSafeArea()
+        .frame(minWidth: 1040, minHeight: 700)
         .preferredColorScheme(.dark)
+        .background(WindowChrome())
+        .environmentObject(state.disk)
+        .environmentObject(state.apps)
+        .environmentObject(state.ai)
+        .environmentObject(state.monitor)
+        .environmentObject(ActivityLog.shared)
         .sheet(isPresented: $state.showProSheet) { ProSheet() }
-        .task { state.revalidateLicense() }
-    }
-
-    @ViewBuilder
-    private var mainContent: some View {
-        switch state.sidebar {
-        case .smartScan:
-            flowContent
-        case .projects:
-            ProjectsView()
-                .transition(.opacity)
-        case .largeFiles:
-            LargeFilesView()
-                .transition(.opacity)
-        case .duplicates:
-            DuplicatesView()
-                .transition(.opacity)
-        case .category(let category):
-            CategoryView(category: category)
-                .transition(.opacity)
-        case .settings:
-            SettingsView()
-                .transition(.opacity)
-        case .log:
-            LogView()
-                .transition(.opacity)
+        .task {
+            state.revalidateLicense()
+            await Snapshot.runIfRequested(state: state)
         }
     }
 
     @ViewBuilder
-    private var flowContent: some View {
-        switch state.phase {
-        case .welcome:
-            WelcomeView().transition(.opacity.combined(with: .scale(scale: 0.97)))
-        case .scanning:
-            ScanningView().transition(.opacity.combined(with: .scale(scale: 0.97)))
-        case .review:
-            ReviewView().transition(.opacity.combined(with: .scale(scale: 0.97)))
-        case .cleaning:
-            CleaningView().transition(.opacity.combined(with: .scale(scale: 0.97)))
-        case .done:
-            DoneView().transition(.opacity.combined(with: .scale(scale: 0.97)))
+    private var screen: some View {
+        switch state.tab {
+        case .overview: OverviewView()
+        case .disk: DiskView()
+        case .clean: CleanView()
+        case .largeFiles: LargeFilesView()
+        case .apps: AppsView()
+        case .projects: ProjectsView()
+        case .ai: AIView()
+        case .monitor: MonitorView()
+        case .duplicates: DuplicatesView()
+        case .settings: SettingsView()
+        case .log: LogView()
         }
     }
 }
 
-// MARK: - Sidebar
+// MARK: - Top bar
 
-struct SidebarView: View {
+struct TopBar: View {
     @EnvironmentObject var state: AppState
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            // clear the traffic lights
-            Spacer().frame(height: 48)
+        HStack(spacing: 4) {
+            // Room for the traffic lights, then the app mark.
+            Spacer().frame(width: 78)
+            RoundedRectangle(cornerRadius: 7, style: .continuous)
+                .fill(Theme.accent)
+                .frame(width: 26, height: 26)
+                .overlay(
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(.white)
+                )
+                .padding(.trailing, 10)
 
-            SidebarRow(item: .smartScan, label: "Smart Scan", icon: "sparkles.rectangle.stack.fill")
-
-            Text("SPACE LENS")
-                .font(.caption2.weight(.bold))
-                .foregroundStyle(Theme.textSecondary.opacity(0.7))
-                .padding(.horizontal, 14)
-                .padding(.top, 16)
-                .padding(.bottom, 4)
-
-            SidebarRow(item: .projects, label: "Projects", icon: "folder.fill.badge.gearshape")
-            SidebarRow(item: .largeFiles, label: "Large Files", icon: "doc.badge.clock.fill")
-            SidebarRow(item: .duplicates, label: "Duplicates", icon: "doc.on.doc.fill")
-
-            Text("CATEGORIES")
-                .font(.caption2.weight(.bold))
-                .foregroundStyle(Theme.textSecondary.opacity(0.7))
-                .padding(.horizontal, 14)
-                .padding(.top, 16)
-                .padding(.bottom, 4)
-
-            ForEach(state.categories) { category in
-                SidebarRow(item: .category(category), label: category.rawValue, icon: category.icon)
+            ForEach(Array(AppTab.barGroups.enumerated()), id: \.offset) { index, group in
+                if index > 0 {
+                    Rectangle().fill(Theme.line).frame(width: 1, height: 20).padding(.horizontal, 8)
+                }
+                ForEach(group, id: \.self) { TabButton(tab: $0) }
             }
 
-            Spacer()
+            Spacer(minLength: 8)
 
+            if state.cleanedAllTime > 0 {
+                HStack(spacing: 6) {
+                    Image(systemName: "trash").font(.system(size: 12, weight: .semibold))
+                    Text(Format.bytes(state.cleanedAllTime)).fontWeight(.bold)
+                }
+                .font(.system(size: 13))
+                .foregroundStyle(Theme.green)
+                Text("cleaned")
+                    .font(.system(size: 13))
+                    .foregroundStyle(Theme.textSecondary)
+                    .padding(.trailing, 6)
+            }
             if ProConfig.paywallEnabled {
-                ProSidebarBadge()
+                Button { state.showProSheet = true } label: {
+                    Badge(state.isPro ? "Pro" : "Get Pro", color: Theme.gold, icon: "crown")
+                }
+                .buttonStyle(.plain)
             }
-            SidebarRow(item: .settings, label: "Settings", icon: "gearshape.fill")
-            SidebarRow(item: .log, label: "Log", icon: "text.alignleft")
-                .padding(.bottom, 14)
+            BarIconButton(tab: .log)
+            BarIconButton(tab: .settings)
         }
-        .padding(.horizontal, 10)
-        .frame(width: 210)
-        .background(Color.black.opacity(0.22))
+        .padding(.trailing, 14)
+        .frame(height: Theme.barHeight)
+        .background(Theme.bar)
+        .overlay(alignment: .bottom) { Rule() }
     }
 }
 
-/// "Unlock Pro" (free) or "Pro ✓" (licensed) — opens the Pro sheet either way.
-struct ProSidebarBadge: View {
+private struct TabButton: View {
     @EnvironmentObject var state: AppState
+    let tab: AppTab
     @State private var hovering = false
 
+    private var isOn: Bool { state.tab.barTab == tab }
+
     var body: some View {
-        Button {
-            state.showProSheet = true
-        } label: {
-            HStack(spacing: 10) {
-                Image(systemName: state.isPro ? "checkmark.seal.fill" : "crown.fill")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(state.isPro ? Theme.tierColor(.safe) : .yellow)
-                    .frame(width: 22)
-                Text(state.isPro ? "TidyDisk Pro" : "Unlock Pro")
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(Theme.textPrimary)
-                Spacer()
+        Button { state.tab = tab } label: {
+            HStack(spacing: 7) {
+                Image(systemName: tab.icon).font(.system(size: 13, weight: .medium))
+                Text(tab.title).font(.system(size: 13.5, weight: .semibold)).fixedSize()
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 8)
+            .foregroundStyle(isOn ? Theme.accent : hovering ? Theme.textPrimary : Theme.textSecondary)
+            .padding(.horizontal, 11)
+            .frame(height: 32)
             .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(hovering ? Color.white.opacity(0.10) : Color.white.opacity(0.05))
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(isOn ? Theme.accent.opacity(0.16) : .clear)
             )
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .onHover { inside in hovering = inside }
+        .onHover { hovering = $0 }
     }
 }
 
-struct SidebarRow: View {
+private struct BarIconButton: View {
     @EnvironmentObject var state: AppState
-    let item: SidebarItem
-    let label: String
-    let icon: String
-
-    @State private var hovering = false
-
-    private var isSelected: Bool { state.sidebar == item }
+    let tab: AppTab
 
     var body: some View {
-        Button {
-            withAnimation(.spring(duration: 0.35)) { state.sidebar = item }
-        } label: {
-            HStack(spacing: 10) {
-                Image(systemName: icon)
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(isSelected ? Theme.accent : Theme.textSecondary)
-                    .frame(width: 22)
-                Text(label)
-                    .font(.body.weight(isSelected ? .semibold : .regular))
-                    .foregroundStyle(isSelected ? Theme.textPrimary : Theme.textSecondary)
-                Spacer()
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(isSelected ? Color.white.opacity(0.12)
-                          : hovering ? Color.white.opacity(0.06) : Color.clear)
-            )
+        Button { state.tab = tab } label: {
+            Image(systemName: tab.icon)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(state.tab == tab ? Theme.accent : Theme.textSecondary)
+                .frame(width: 30, height: 30)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .onHover { inside in hovering = inside }
+        .help(tab.title)
+    }
+}
+
+// MARK: - Window chrome
+
+/// Gives the window a tall unified title bar so the traffic lights sit centred
+/// in our own top bar, and paints the window in the app background.
+private struct WindowChrome: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSView { ChromeView() }
+    func updateNSView(_ nsView: NSView, context: Context) {}
+
+    final class ChromeView: NSView {
+        override func viewDidMoveToWindow() {
+            super.viewDidMoveToWindow()
+            guard let window else { return }
+            window.titlebarAppearsTransparent = true
+            window.titleVisibility = .hidden
+            window.styleMask.insert(.fullSizeContentView)
+            if window.toolbar == nil {
+                let toolbar = NSToolbar()
+                toolbar.showsBaselineSeparator = false
+                window.toolbar = toolbar
+            }
+            window.toolbarStyle = .unified
+            window.backgroundColor = NSColor(Theme.bg)
+            window.isMovableByWindowBackground = false
+        }
+    }
+}
+
+// MARK: - Snapshot mode
+
+/// `TidyDisk --shot <tab> <out.png> [seconds]` opens the app on that tab, waits
+/// for it to settle, writes the window to a PNG and quits. Used to check
+/// screens without Screen Recording permission.
+enum Snapshot {
+    @MainActor
+    static func runIfRequested(state: AppState) async {
+        let args = CommandLine.arguments
+        guard let flag = args.firstIndex(of: "--shot"), args.count > flag + 2,
+              let tab = AppTab(rawValue: args[flag + 1]) else { return }
+        let delay = args.count > flag + 3 ? Double(args[flag + 3]) ?? 3 : 3
+        state.tab = tab
+        if let window = NSApp.windows.first(where: { $0.canBecomeMain }) {
+            window.setContentSize(NSSize(width: 1180, height: 780))
+        }
+        try? await Task.sleep(for: .seconds(delay))
+        guard let window = NSApp.windows.first(where: { $0.canBecomeMain }),
+              let frame = window.contentView?.superview,
+              let rep = frame.bitmapImageRepForCachingDisplay(in: frame.bounds) else { exit(1) }
+        frame.cacheDisplay(in: frame.bounds, to: rep)
+        try? rep.representation(using: .png, properties: [:])?
+            .write(to: URL(fileURLWithPath: args[flag + 2]))
+        // Report what sits under the first tab, to prove the bar takes clicks.
+        let probe = frame.hitTest(NSPoint(x: 150, y: frame.bounds.height - 26))
+        print("hit-test in top bar:", probe.map { String(describing: type(of: $0)) } ?? "nil")
+        AppDelegate.allowTermination = true
+        exit(0)
     }
 }

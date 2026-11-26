@@ -1,55 +1,81 @@
 import SwiftUI
 
+/// Flat dark design tokens. Every screen reads colours, type and spacing from here.
 enum Theme {
-    // Purple "CleanMyMac" palette
-    static let deepPurple = Color(red: 0.10, green: 0.03, blue: 0.22)
-    static let purple = Color(red: 0.32, green: 0.12, blue: 0.55)
-    static let magenta = Color(red: 0.78, green: 0.25, blue: 0.95)
-    static let accent = Color(red: 0.65, green: 0.35, blue: 1.0)
+    // Surfaces
+    static let bg = Color(hex: 0x0E0E10)
+    static let bar = Color(hex: 0x17171A)
+    static let panel = Color(hex: 0x1B1B1E)
+    static let raised = Color(hex: 0x26262B)
+    static let line = Color.white.opacity(0.07)
+    static let track = Color.white.opacity(0.09)
 
-    // Success palette
-    static let deepGreen = Color(red: 0.04, green: 0.15, blue: 0.08)
-    static let green = Color(red: 0.15, green: 0.45, blue: 0.22)
+    // Signal colours
+    static let accent = Color(hex: 0x6366F1)
+    static let gold = Color(hex: 0xEDB23E)
+    static let green = Color(hex: 0x4DB883)
+    static let amber = Color(hex: 0xE9A23B)
+    static let red = Color(hex: 0xE5534B)
+    static let blue = Color(hex: 0x4F86F0)
+    static let violet = Color(hex: 0xA78BFA)
+    static let gray = Color(hex: 0x8A8A93)
 
-    static let cardFill = Color.white.opacity(0.08)
-    static let cardStroke = Color.white.opacity(0.12)
+    // Text
     static let textPrimary = Color.white
-    static let textSecondary = Color.white.opacity(0.65)
+    static let textSecondary = Color.white.opacity(0.62)
+    static let textTertiary = Color.white.opacity(0.38)
+
+    // Metrics
+    static let radius: CGFloat = 12
+    static let gap: CGFloat = 16
+    static let pagePadding: CGFloat = 24
+    static let barHeight: CGFloat = 52
 
     static func tierColor(_ tier: RiskTier) -> Color {
         switch tier {
-        case .safe: return Color(red: 0.35, green: 0.85, blue: 0.55)
-        case .aggressive: return Color(red: 1.0, green: 0.65, blue: 0.25)
-        case .nuclear: return Color(red: 1.0, green: 0.35, blue: 0.40)
+        case .safe: return green
+        case .aggressive: return amber
+        case .nuclear: return red
         }
-    }
-
-    static func background(for phase: AppPhase) -> LinearGradient {
-        let colors: [Color] = phase == .done
-            ? [deepGreen, green.opacity(0.85), deepGreen]
-            : [deepPurple, purple, deepPurple.opacity(0.9)]
-        return LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing)
     }
 }
 
-struct GlassCard: ViewModifier {
-    var cornerRadius: CGFloat = 18
+extension Color {
+    init(hex: UInt32) {
+        self.init(red: Double((hex >> 16) & 0xFF) / 255,
+                  green: Double((hex >> 8) & 0xFF) / 255,
+                  blue: Double(hex & 0xFF) / 255)
+    }
+}
+
+extension Font {
+    /// Wide heavy face for titles and big numbers.
+    static func display(_ size: CGFloat) -> Font {
+        .system(size: size, weight: .heavy).width(.expanded)
+    }
+
+    /// Uppercase section labels ("CLEAN", "RUNNING NOW").
+    static let label = Font.system(size: 11.5, weight: .semibold)
+}
+
+/// Flat surface with a hairline border: the only card style in the app.
+struct PanelStyle: ViewModifier {
+    var radius: CGFloat = Theme.radius
+    var fill: Color = Theme.panel
 
     func body(content: Content) -> some View {
         content
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(Theme.cardFill)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                            .strokeBorder(Theme.cardStroke, lineWidth: 1)
-                    )
+            .background(fill)
+            .clipShape(RoundedRectangle(cornerRadius: radius, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .strokeBorder(Theme.line, lineWidth: 1)
             )
     }
 }
 
 extension View {
-    func glassCard(cornerRadius: CGFloat = 18) -> some View {
-        modifier(GlassCard(cornerRadius: cornerRadius))
+    func panel(radius: CGFloat = Theme.radius, fill: Color = Theme.panel) -> some View {
+        modifier(PanelStyle(radius: radius, fill: fill))
     }
 }

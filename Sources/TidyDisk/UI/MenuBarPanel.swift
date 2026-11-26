@@ -6,7 +6,7 @@ struct MenuBarLabel: View {
 
     var body: some View {
         // Menu bar renders this as template image + text
-        Image(systemName: "bubbles.and.sparkles.fill")
+        Image(systemName: "sparkles")
         Text(Format.wholeGB(state.freeSpace))
             .monospacedDigit()
     }
@@ -24,8 +24,8 @@ struct MenuBarPanel: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Image(systemName: "bubbles.and.sparkles.fill")
-                    .foregroundStyle(.purple)
+                Image(systemName: "sparkles")
+                    .foregroundStyle(Theme.accent)
                 Text("TidyDisk")
                     .font(.headline)
                 Spacer()
@@ -35,7 +35,7 @@ struct MenuBarPanel: View {
             }
 
             ProgressView(value: usedFraction)
-                .tint(usedFraction > 0.9 ? .red : .purple)
+                .tint(usedFraction > 0.9 ? Theme.red : Theme.accent)
             Text("\(Format.bytes(state.totalSpace - state.freeSpace)) used of \(Format.bytes(state.totalSpace))")
                 .font(.caption)
                 .foregroundStyle(.secondary)
