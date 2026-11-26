@@ -11,7 +11,7 @@ struct ContentView: View {
             screen
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .background(Theme.bg)
+        .background(Theme.backdrop)
         .ignoresSafeArea()
         .frame(minWidth: 1040, minHeight: 700)
         .preferredColorScheme(.dark)
@@ -56,10 +56,11 @@ struct TopBar: View {
             // Room for the traffic lights, then the app mark.
             Spacer().frame(width: 78)
             RoundedRectangle(cornerRadius: 7, style: .continuous)
-                .fill(Theme.accent)
+                .fill(LinearGradient(colors: [Theme.magenta, Theme.accent],
+                                     startPoint: .topLeading, endPoint: .bottomTrailing))
                 .frame(width: 26, height: 26)
                 .overlay(
-                    Image(systemName: "sparkles")
+                    Image(systemName: "bubbles.and.sparkles.fill")
                         .font(.system(size: 13, weight: .bold))
                         .foregroundStyle(.white)
                 )

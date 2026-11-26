@@ -364,7 +364,7 @@ struct Segmented<Value: Hashable>: View {
                     .frame(height: 28)
                     .background(
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .fill(isOn ? Theme.bg : .clear)
+                            .fill(isOn ? Theme.selected : .clear)
                     )
                     .contentShape(Rectangle())
                 }

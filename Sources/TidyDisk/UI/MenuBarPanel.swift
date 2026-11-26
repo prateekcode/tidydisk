@@ -6,7 +6,7 @@ struct MenuBarLabel: View {
 
     var body: some View {
         // Menu bar renders this as template image + text
-        Image(systemName: "sparkles")
+        Image(systemName: "bubbles.and.sparkles.fill")
         Text(Format.wholeGB(state.freeSpace))
             .monospacedDigit()
     }
@@ -24,7 +24,7 @@ struct MenuBarPanel: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Image(systemName: "sparkles")
+                Image(systemName: "bubbles.and.sparkles.fill")
                     .foregroundStyle(Theme.accent)
                 Text("TidyDisk")
                     .font(.headline)

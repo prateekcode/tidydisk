@@ -1,29 +1,41 @@
 import SwiftUI
 
-/// Flat dark design tokens. Every screen reads colours, type and spacing from here.
+/// TidyDisk's own purple look as design tokens. Every screen reads colours,
+/// type and spacing from here.
 enum Theme {
-    // Surfaces
-    static let bg = Color(hex: 0x0E0E10)
-    static let bar = Color(hex: 0x17171A)
-    static let panel = Color(hex: 0x1B1B1E)
-    static let raised = Color(hex: 0x26262B)
-    static let line = Color.white.opacity(0.07)
-    static let track = Color.white.opacity(0.09)
+    // Brand purples (unchanged since 1.0)
+    static let deepPurple = Color(red: 0.10, green: 0.03, blue: 0.22)
+    static let purple = Color(red: 0.32, green: 0.12, blue: 0.55)
+    static let magenta = Color(red: 0.78, green: 0.25, blue: 0.95)
+    static let accent = Color(red: 0.65, green: 0.35, blue: 1.0)
+
+    /// Window background: the purple wash the app has always had.
+    static let backdrop = LinearGradient(colors: [deepPurple, purple, deepPurple.opacity(0.9)],
+                                         startPoint: .topLeading, endPoint: .bottomTrailing)
+    /// Solid stand-in for `backdrop` where a gradient cannot go (window backing).
+    static let bg = deepPurple
+
+    // Surfaces sit on the backdrop as white tints
+    static let bar = Color.black.opacity(0.22)
+    static let panel = Color.white.opacity(0.08)
+    static let raised = Color.white.opacity(0.06)
+    static let selected = Color.white.opacity(0.16)
+    static let line = Color.white.opacity(0.12)
+    static let track = Color.white.opacity(0.12)
 
     // Signal colours
-    static let accent = Color(hex: 0x6366F1)
-    static let gold = Color(hex: 0xEDB23E)
-    static let green = Color(hex: 0x4DB883)
-    static let amber = Color(hex: 0xE9A23B)
-    static let red = Color(hex: 0xE5534B)
-    static let blue = Color(hex: 0x4F86F0)
-    static let violet = Color(hex: 0xA78BFA)
-    static let gray = Color(hex: 0x8A8A93)
+    static let gold = Color(red: 1.0, green: 0.78, blue: 0.28)
+    static let green = Color(red: 0.35, green: 0.85, blue: 0.55)
+    static let amber = Color(red: 1.0, green: 0.65, blue: 0.25)
+    static let red = Color(red: 1.0, green: 0.35, blue: 0.40)
+    static let blue = Color(red: 0.38, green: 0.62, blue: 1.0)
+    static let violet = Color(red: 0.80, green: 0.62, blue: 1.0)
+    static let gray = Color.white.opacity(0.55)
 
     // Text
     static let textPrimary = Color.white
-    static let textSecondary = Color.white.opacity(0.62)
-    static let textTertiary = Color.white.opacity(0.38)
+    static let textSecondary = Color.white.opacity(0.65)
+    static let textTertiary = Color.white.opacity(0.42)
 
     // Metrics
     static let radius: CGFloat = 12
@@ -58,7 +70,7 @@ extension Font {
     static let label = Font.system(size: 11.5, weight: .semibold)
 }
 
-/// Flat surface with a hairline border: the only card style in the app.
+/// White-tint surface with a hairline border: the only card style in the app.
 struct PanelStyle: ViewModifier {
     var radius: CGFloat = Theme.radius
     var fill: Color = Theme.panel

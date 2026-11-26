@@ -88,7 +88,7 @@ struct ProSheet: View {
         }
         .padding(.horizontal, 34)
         .frame(width: 440)
-        .background(Theme.bg.ignoresSafeArea())
+        .background(Theme.backdrop.ignoresSafeArea())
         .preferredColorScheme(.dark)
     }
 }
