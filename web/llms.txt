@@ -1,24 +1,30 @@
-# TidyDisk: free disk cleaner for Mac developers
+# TidyDisk: free, open source disk cleaner for Mac developers
 
-> TidyDisk finds the gigabytes hiding in Xcode DerivedData, node_modules, simulators, package-manager caches and forgotten projects, and cleans them safely.
+> TidyDisk finds the gigabytes that Xcode DerivedData, simulators, node_modules, Gradle, package-manager caches and AI tools leave on a developer Mac, shows what each item is, and removes only what the user ticks.
 
-Made by RiekApps (https://riekapps.com), an indie app studio. Open source: https://github.com/prateekcode/tidydisk
+Made by RiekApps (https://riekapps.com), an indie app studio. Source code (MIT licence): https://github.com/prateekcode/tidydisk
 
 ## Facts
-- Free. Version 2.0, macOS 14 or later, Apple Silicon and Intel (universal), notarized by Apple.
+- Free and open source under the MIT licence. Version 2.0, macOS 14 or later, Apple Silicon and Intel (universal), notarized by Apple.
 - Install: download https://tidydisk.riekapps.com/TidyDisk-2.0.zip, or `brew install --cask prateekcode/tap/tidydisk`.
-- 100% on-device: no account, no telemetry; no data is collected or transmitted.
-- Smart Scan detects the developer tools actually installed (Xcode, npm, CocoaPods, Gradle, Docker, Homebrew) and scans only those.
-- Space Lens for projects: finds every project and what its build artifacts weigh; clean node_modules and build folders, or archive whole projects to GitHub or iCloud first.
-- Large files and duplicates: surfaces forgotten multi-gigabyte files and duplicate downloads. Deletions go to the Trash.
-- Lives in the menu bar: free space at a glance, one-click scans, optional weekly scan with a notification.
-- Three safety tiers: safe caches are pre-selected; aggressive and "nuclear" options (such as deleting all node_modules) always need an explicit opt-in.
-- Native SwiftUI app, a few megabytes on disk (not Electron).
+- Build from source: `git clone https://github.com/prateekcode/tidydisk && cd tidydisk && ./build.sh` (Swift Package Manager, no third-party dependencies).
+- Privacy: the app has no account and no ads. It sends nothing unless you switch on anonymous usage statistics in Settings, which are off by default. Scanning and cleaning happen on the Mac.
+- Tabs: Overview, Disk, Clean, Large Files, Apps, Projects, AI, Monitor, plus Duplicates and a menu bar item.
+- Disk: where the space went by location, as a treemap, by folder and by file type; one pass over about 2 million files takes seconds.
+- Clean: Xcode DerivedData and caches, CocoaPods, npm/pnpm/yarn, Gradle, Homebrew, SwiftPM, Docker, simulators and more. A cleaner is shown only when its folder, app or tool exists on the Mac.
+- Three risk groups: Safe to clean (one button selects it), Review before cleaning and Handle with care (never selected for you; cleaning them asks once more).
+- AI: what Claude, ChatGPT, Ollama, LM Studio, Cursor and other AI tools cost in disk, memory and CPU, with their MCP servers and local ports.
+- Monitor: CPU, GPU, memory, disk, network, battery, top processes and a speed test.
+- Safety: scanning is read-only. Caches and build output are deleted because the tools regenerate them. Files removed from Large Files, Apps, AI and Duplicates go to the Trash. Every action is logged.
+- Menu bar: live free space, one-click scan, optional weekly scan with a notification.
+- Native SwiftUI app, a 3.6 MB download (not Electron).
 
 ## Pages
-- [TidyDisk](https://tidydisk.riekapps.com/): download and overview
+- [TidyDisk](https://tidydisk.riekapps.com/): download, features, safety model, FAQ
+- [Source on GitHub](https://github.com/prateekcode/tidydisk)
 - [TidyDisk on riekapps.com](https://riekapps.com/app/tidydisk)
 - [Guide: free up disk space on Mac](https://riekapps.com/blog/free-up-disk-space-on-mac)
 
 ## Contact
 - riekapps@gmail.com
+- Issues: https://github.com/prateekcode/tidydisk/issues

@@ -3,213 +3,1173 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TidyDisk — Free Disk Cleaner for Mac Developers</title>
-  <meta name="description" content="TidyDisk is a free macOS app that reclaims disk space from Xcode DerivedData, node_modules, simulators, package-manager caches and more. Notarized by Apple, runs 100% on-device.">
-  <meta property="og:title" content="TidyDisk — Free Disk Cleaner for Mac Developers">
-  <meta property="og:description" content="Reclaim gigabytes from Xcode, node_modules, caches and forgotten projects. Free, notarized, on-device.">
+  <title>TidyDisk: Free, Open Source Disk Cleaner for Mac Developers</title>
+  <meta name="description" content="TidyDisk 2.0 is a free, open source Mac disk cleaner for developers. Clears Xcode, simulators, node_modules, Gradle and AI tool data. MIT licensed.">
+  <meta name="theme-color" content="#0D0C11">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:title" content="TidyDisk: Free, Open Source Disk Cleaner for Mac Developers">
+  <meta property="og:description" content="Get your developer Mac's space back from Xcode, simulators, node_modules, Gradle, package caches and AI tools. Free, MIT licensed, notarized by Apple.">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://tidydisk.riekapps.com/">
+  <meta property="og:site_name" content="TidyDisk">
   <meta property="og:image" content="https://tidydisk.riekapps.com/screenshot.png">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫧</text></svg>">
+  <meta property="og:image:width" content="2360">
+  <meta property="og:image:height" content="1560">
+  <meta property="og:image:alt" content="TidyDisk Overview tab: free space, what can be cleared in three risk groups, a live system monitor and AI usage">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23A659FF'/%3E%3Cg fill='%23fff'%3E%3Ccircle cx='12' cy='12.2' r='3.3'/%3E%3Ccircle cx='6.6' cy='8.6' r='1.7'/%3E%3Ccircle cx='16.6' cy='6.4' r='2'/%3E%3Ccircle cx='18.2' cy='15.6' r='1.5'/%3E%3Ccircle cx='7.8' cy='17.6' r='2'/%3E%3C/g%3E%3C/svg%3E">
   <link rel="canonical" href="https://tidydisk.riekapps.com/">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "TidyDisk",
-    "operatingSystem": "macOS 14.0 or later",
-    "applicationCategory": "UtilitiesApplication",
-    "description": "Free disk cleaner for Mac developers. Reclaims space from Xcode DerivedData, node_modules, simulators and package-manager caches. Runs 100% on-device.",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "downloadUrl": "https://tidydisk.riekapps.com/TidyDisk-2.0.zip",
-    "author": { "@type": "Organization", "name": "RiekApps", "url": "https://riekapps.com" }
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://tidydisk.riekapps.com/#app",
+        "name": "TidyDisk",
+        "url": "https://tidydisk.riekapps.com/",
+        "operatingSystem": "macOS 14.0 or later",
+        "applicationCategory": "UtilitiesApplication",
+        "softwareVersion": "2.0",
+        "description": "Free, open source disk cleaner for Mac developers. Reclaims space from Xcode DerivedData, simulators, node_modules, Gradle, package-manager caches and AI tools. Runs on your Mac.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "isAccessibleForFree": true,
+        "downloadUrl": "https://tidydisk.riekapps.com/TidyDisk-2.0.zip",
+        "screenshot": "https://tidydisk.riekapps.com/screenshot.png",
+        "image": "https://tidydisk.riekapps.com/screenshot.png",
+        "license": "https://github.com/prateekcode/tidydisk/blob/main/LICENSE",
+        "sameAs": [
+          "https://github.com/prateekcode/tidydisk",
+          "https://riekapps.com/app/tidydisk"
+        ],
+        "author": { "@type": "Organization", "name": "RiekApps", "url": "https://riekapps.com" }
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "name": "TidyDisk source code",
+        "codeRepository": "https://github.com/prateekcode/tidydisk",
+        "programmingLanguage": "Swift",
+        "runtimePlatform": "macOS",
+        "license": "https://opensource.org/licenses/MIT",
+        "targetProduct": { "@id": "https://tidydisk.riekapps.com/#app" }
+      }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is TidyDisk really free?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Every feature in TidyDisk 2.0 is free. There is no trial, no subscription and no account. The source is MIT licensed, so you can also read it and build the app yourself." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is TidyDisk safe?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Scanning is read-only: it only measures sizes. Nothing is removed until you press Clean. One button selects the Safe to clean group, and the other two groups are never selected for you. Caches and build output are deleted because the tools regenerate them. Files you remove from Large Files, Apps, AI and Duplicates go to the Trash. Every action is logged. TidyDisk cannot know whether you still need something, so read the list before you clean." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does TidyDisk need Full Disk Access?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. It works without it. macOS protects some folders, such as other apps' containers and cloud storage. Without Full Disk Access TidyDisk leaves those out and tells you so. You can grant it in System Settings, Privacy and Security, if you want them counted." }
+      },
+      {
+        "@type": "Question",
+        "name": "How is TidyDisk different from paid cleaners?",
+        "acceptedAnswer": { "@type": "Answer", "text": "It is built for developer machines. It knows Xcode, simulators, Gradle, CocoaPods, npm, Docker and AI tools by name, and uses each tool's own cleanup command where one exists. There is no subscription, and you can read the source. It does not scan for malware or promise to speed up your Mac." }
+      },
+      {
+        "@type": "Question",
+        "name": "Where is my data sent?",
+        "acceptedAnswer": { "@type": "Answer", "text": "The app has no account and no ads. It sends nothing unless you switch on anonymous usage statistics in Settings, which are off by default. Features you start yourself, such as the speed test or pushing a project to GitHub, use the network only when you start them." }
+      }
+    ]
   }
   </script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; }
+    * { margin: 0; padding: 0; }
     :root {
-      --bg: #0e0a1f;
-      --card: rgba(255, 255, 255, 0.06);
-      --border: rgba(255, 255, 255, 0.10);
-      --text: #f2effc;
-      --muted: #a89fc7;
-      --accent: #a78bfa;
-      --accent2: #7c3aed;
-      --green: #34d399;
+      /* TidyDisk's app theme (Sources/TidyDisk/UI/Theme.swift) */
+      --bg: #0D0C11;
+      --bar: #15141A;
+      --panel: #1A1920;
+      --raised: #211F28;
+      --selected: #34313F;
+      --line: rgba(255, 255, 255, 0.08);
+      --track: rgba(255, 255, 255, 0.10);
+      --accent: #A659FF;
+      --accent-tint: rgba(166, 89, 255, 0.14);
+      --t1: #FFFFFF;
+      --t2: rgba(255, 255, 255, 0.64);
+      --t3: rgba(255, 255, 255, 0.44);
+      --green: #6FD08C;
+      --amber: #F2A54A;
+      --red: #F26B6B;
+      --r: 12px;
+      --gutter: 16px;
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     }
+    html { scroll-behavior: smooth; scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
-      background:
-        radial-gradient(1000px 600px at 70% -10%, rgba(124, 58, 237, 0.35), transparent 60%),
-        radial-gradient(800px 500px at 10% 20%, rgba(167, 139, 250, 0.18), transparent 55%),
-        var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      line-height: 1.6;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--t1);
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
-    .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
-    header { padding: 28px 0; display: flex; align-items: center; gap: 10px; }
-    header .logo { font-size: 26px; }
-    header .name { font-weight: 700; font-size: 19px; letter-spacing: -0.02em; }
-    header .by { color: var(--muted); font-size: 13px; margin-left: auto; text-decoration: none; }
-    header .by:hover { color: var(--accent); }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+    ul, ol { list-style: none; }
+    code, .mono { font-family: var(--mono); }
+    .ico { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+    .ico.fill { fill: currentColor; stroke: none; }
+    .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-    .hero { text-align: center; padding: 56px 0 40px; }
-    .hero h1 {
-      font-size: clamp(34px, 6vw, 56px);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.12;
-    }
-    .hero h1 span {
-      background: linear-gradient(90deg, var(--accent), #f0abfc);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .hero p.sub {
-      color: var(--muted);
-      font-size: 19px;
-      max-width: 620px;
-      margin: 18px auto 0;
-    }
-    .cta { margin-top: 34px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-    .btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: linear-gradient(180deg, var(--accent), var(--accent2));
-      color: white; text-decoration: none;
-      font-size: 18px; font-weight: 700;
-      padding: 16px 34px; border-radius: 16px;
-      box-shadow: 0 10px 34px rgba(124, 58, 237, 0.45);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(124, 58, 237, 0.6); }
-    .cta .fineprint { color: var(--muted); font-size: 13px; }
-    .cta .fineprint b { color: var(--text); font-weight: 600; }
-    .brew {
-      font-family: "SF Mono", ui-monospace, Menlo, monospace;
-      font-size: 13px; color: var(--muted);
-      background: rgba(0, 0, 0, 0.35); border: 1px solid var(--border);
-      border-radius: 10px; padding: 8px 14px;
-    }
-    .brew b { color: var(--green); font-weight: 500; }
+    .wrap { width: 100%; max-width: 1168px; margin: 0 auto; padding: 0 var(--gutter); }
 
-    .shot {
-      display: block; max-width: 100%; height: auto;
-      margin: 40px auto 0; border-radius: 14px;
-      border: 1px solid var(--border);
-      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+    /* Type: wide heavy titles and tracked uppercase labels, as in the app */
+    .display { font-weight: 850; font-stretch: 125%; letter-spacing: -0.02em; line-height: 1.05; text-wrap: balance; }
+    .label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--t3);
     }
-    .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+    .label .ico { width: 15px; height: 15px; }
+    .sq { width: 8px; height: 8px; border-radius: 2.5px; background: var(--accent); flex: none; align-self: flex-start; margin-top: 5px; }
+    h2.display { font-size: clamp(28px, 4.1vw, 46px); margin-top: 14px; }
+    h3.display { font-size: clamp(22px, 2.6vw, 30px); line-height: 1.12; }
+    .lead { color: var(--t2); font-size: clamp(16.5px, 1.5vw, 18.5px); line-height: 1.6; max-width: 720px; margin-top: 18px; text-wrap: pretty; }
+    .lead strong, .body strong { color: var(--t1); font-weight: 600; }
+    .body { color: var(--t2); text-wrap: pretty; }
+    .body + .body { margin-top: 14px; }
+
+    /* Flat surface with a hairline: the only card style */
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); }
+    .panel-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 14px 18px; border-bottom: 1px solid var(--line);
+    }
     .badge {
-      font-size: 12.5px; color: var(--muted);
-      border: 1px solid var(--border); border-radius: 999px;
-      padding: 5px 12px; background: var(--card);
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 4px 9px; border-radius: 999px; background: var(--raised); color: var(--t2);
     }
-    .badge b { color: var(--green); }
 
-    .features {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-      gap: 16px; padding: 48px 0;
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      font: inherit; font-size: 16px; font-weight: 700; line-height: 1.2;
+      padding: 14px 20px; border-radius: 10px; border: 1px solid transparent;
+      cursor: pointer; text-decoration: none; white-space: nowrap;
+      transition: background-color .15s ease, border-color .15s ease;
     }
-    .card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 18px; padding: 22px;
-    }
-    .card .ico { font-size: 26px; }
-    .card h3 { font-size: 16px; margin: 10px 0 4px; letter-spacing: -0.01em; }
-    .card p { color: var(--muted); font-size: 14px; }
+    .btn:hover { text-decoration: none; }
+    .btn.primary { background: var(--accent); color: #fff; }
+    .btn.primary:hover { background: #B36FFF; }
+    .btn.ghost { background: var(--panel); border-color: var(--line); color: var(--t1); }
+    .btn.ghost:hover { background: var(--raised); }
+    .btn.sm { font-size: 13.5px; font-weight: 600; padding: 7px 12px; border-radius: 8px; gap: 7px; }
+    .btn.sm .ico { width: 15px; height: 15px; }
+    .btn .count { color: var(--t2); font-weight: 600; padding-left: 8px; margin-left: 1px; border-left: 1px solid var(--line); }
 
-    .install { padding: 8px 0 56px; }
-    .install h2 { font-size: 24px; letter-spacing: -0.02em; margin-bottom: 18px; text-align: center; }
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
-    .step { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
-    .step .n {
-      width: 26px; height: 26px; border-radius: 50%;
-      background: var(--accent2); color: white;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700; margin-bottom: 10px;
+    /* Copyable command */
+    .cmd {
+      display: flex; align-items: stretch; background: var(--panel);
+      border: 1px solid var(--line); border-radius: 10px; overflow: hidden; min-width: 0;
     }
-    .step p { font-size: 14px; color: var(--muted); }
-    .step p b { color: var(--text); }
+    .cmd code {
+      flex: 1; min-width: 0; padding: 13px 14px; font-size: 13.5px; line-height: 1.5;
+      color: var(--t1); overflow-wrap: anywhere;
+    }
+    .cmd code .p { color: var(--t3); user-select: none; margin-right: 8px; }
+    .copy {
+      display: inline-flex; align-items: center; gap: 7px; flex: none;
+      font: inherit; font-size: 13px; font-weight: 600; color: var(--t2);
+      background: var(--raised); border: 0; border-left: 1px solid var(--line);
+      padding: 0 14px; cursor: pointer; min-width: 92px; justify-content: center;
+      transition: background-color .15s ease, color .15s ease;
+    }
+    .copy:hover { background: var(--selected); color: var(--t1); }
+    .copy .ico { width: 15px; height: 15px; }
+    .copy .i-ok { display: none; color: var(--green); }
+    .copy.ok { color: var(--t1); }
+    .copy.ok .i-ok { display: block; }
+    .copy.ok .i-copy { display: none; }
+    .nb { white-space: nowrap; }
+    @media (max-width: 519px) {
+      .cmd { flex-direction: column; }
+      .cmd code { font-size: 13px; }
+      .copy { border-left: 0; border-top: 1px solid var(--line); padding: 10px 14px; }
+    }
 
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 26px 0 40px; text-align: center;
-      color: var(--muted); font-size: 13px;
+    /* Top bar: the app's 52px bar */
+    .bar {
+      position: sticky; top: 0; z-index: 20; height: 52px;
+      background: var(--bar); border-bottom: 1px solid var(--line);
     }
-    footer a { color: var(--accent); text-decoration: none; }
+    .bar .wrap { height: 100%; display: flex; align-items: center; gap: 8px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--t1); font-weight: 700; font-size: 16px; letter-spacing: -0.01em; margin-right: 10px; }
+    .brand:hover { text-decoration: none; }
+    .mark { width: 28px; height: 28px; flex: none; }
+    .tabs { display: none; align-items: center; gap: 2px; }
+    .tabs a { color: var(--t2); font-size: 14px; font-weight: 600; padding: 7px 12px; border-radius: 8px; }
+    .tabs a:hover { background: var(--raised); color: var(--t1); text-decoration: none; }
+    .bar .btn { margin-left: auto; }
+
+    /* Hero */
+    .hero { padding: 44px 0 0; }
+    .hero-grid { display: grid; gap: 28px; }
+    h1.display { font-size: clamp(34px, 5.6vw, 60px); margin-top: 18px; }
+    .hero .lead { font-size: clamp(17px, 1.6vw, 20px); max-width: 640px; }
+    .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+    .hero .cmd { margin-top: 12px; max-width: 560px; }
+    .fine { color: var(--t3); font-size: 13px; margin-top: 14px; }
+    .facts { display: flex; flex-wrap: wrap; gap: 10px 22px; align-content: start; }
+    .facts .panel-head { display: none; }
+    .facts li { display: flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: 600; }
+    .facts li .ico { color: var(--t3); width: 17px; height: 17px; }
+    .facts li span { display: none; }
+
+    /* Window frame for real screenshots */
+    .shot { margin-top: 28px; }
+    .win { position: relative; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--bg); }
+    .win a { display: block; }
+    .win img { width: 100%; }
+    .win .dot {
+      position: absolute; top: calc(52 * 100% / var(--h)); width: calc(24 * 100% / var(--w)); aspect-ratio: 1;
+      border-radius: 50%; background: rgba(255, 255, 255, 0.18); transform: translate(-50%, -50%); pointer-events: none;
+    }
+    .win .dot:nth-child(1) { left: calc(54 * 100% / var(--w)); }
+    .win .dot:nth-child(2) { left: calc(94 * 100% / var(--w)); }
+    .win .dot:nth-child(3) { left: calc(134 * 100% / var(--w)); }
+    figcaption { color: var(--t3); font-size: 13px; margin-top: 12px; }
+
+    .hero .shot { margin-top: 44px; }
+    .cap3 { display: grid; gap: 14px 32px; margin-top: 22px; }
+    .cap3 p { color: var(--t2); font-size: 15px; }
+    .cap3 p b { color: var(--t1); font-weight: 600; }
+
+    /* Open source at a glance */
+    .glance { margin-top: 44px; }
+    .glance .panel-head a { font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+    .glance .panel-head a .ico { width: 14px; height: 14px; }
+    .cells { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cell { padding: 16px 18px; border-top: 1px solid var(--line); border-left: 1px solid var(--line); min-width: 0; }
+    .cell:nth-child(-n+2) { border-top: 0; }
+    .cell:nth-child(odd) { border-left: 0; }
+    #gh-cells:not(.has-stars) .cell:nth-child(3) { grid-column: span 2; }
+    .cell .v { font-size: 18px; font-weight: 700; margin-top: 6px; letter-spacing: -0.01em; }
+    .cell .s { font-size: 13px; color: var(--t2); margin-top: 2px; }
+    .cell .s a { color: var(--t2); }
+    .cell .s a:hover { color: var(--t1); }
+    .cell[hidden] { display: none; }
+
+    /* Sections */
+    section { padding: 72px 0; }
+    section + section, .hero + section { border-top: 1px solid var(--line); }
+    .hero { padding-bottom: 72px; }
+
+    /* Why */
+    .two { display: grid; gap: 32px; }
+    .paths .row { display: grid; gap: 2px; padding: 12px 18px; border-top: 1px solid var(--line); }
+    .paths .row:first-of-type { border-top: 0; }
+    .paths .row code { font-size: 13px; color: var(--t1); overflow-wrap: anywhere; }
+    .paths .row span { font-size: 13.5px; color: var(--t2); }
+    .paths .note { padding: 12px 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--t3); }
+    .manifesto { margin-top: 72px; padding-top: 72px; border-top: 1px solid var(--line); }
+    .statement { font-size: clamp(25px, 3.7vw, 44px); line-height: 1.14; margin-top: 18px; max-width: 1040px; }
+    .statement span { color: var(--t3); }
+    .promises { display: grid; gap: 0; margin-top: 36px; }
+    .promises li { padding: 20px 0; border-top: 1px solid var(--line); }
+    .promises h3 { font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .promises h3 .ico { color: var(--accent); }
+    .promises p { color: var(--t2); font-size: 15px; margin-top: 6px; }
+    .more { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; margin-top: 22px; }
+    .more .ico { width: 15px; height: 15px; }
+
+    /* Features: one block per tab */
+    .feat { margin-top: 64px; }
+    .feat-head { display: grid; gap: 18px; }
+    .tab {
+      display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 8px;
+      background: var(--accent-tint); color: #C79BFF; font-size: 14px; font-weight: 600;
+    }
+    .tab .ico { width: 16px; height: 16px; }
+    .feat h3 { margin-top: 16px; }
+    .feat .body { margin-top: 10px; max-width: 520px; }
+    .ticks { display: grid; gap: 10px; align-content: start; }
+    .ticks li { position: relative; padding-left: 20px; color: var(--t2); font-size: 15.5px; }
+    .ticks li::before { content: ""; position: absolute; left: 0; top: 0.58em; width: 7px; height: 7px; border-radius: 2px; background: var(--accent); }
+    .ticks li b { color: var(--t1); font-weight: 600; }
+    .minis { display: grid; gap: 16px; margin-top: 64px; }
+    .mini { padding: 20px; }
+    .tile { width: 36px; height: 36px; border-radius: 9px; background: var(--accent-tint); color: #C79BFF; display: grid; place-items: center; flex: none; }
+    .mini .label { margin-top: 16px; }
+    .mini h3 { font-size: 17px; font-weight: 700; margin-top: 6px; }
+    .mini p { color: var(--t2); font-size: 14.5px; margin-top: 6px; }
+    .mini p code { font-size: 12.5px; color: var(--t1); }
+
+    /* Safety */
+    .tiers { display: grid; gap: 16px; margin-top: 36px; }
+    .tier { padding: 20px; }
+    .tier .tile.g { background: rgba(111, 208, 140, 0.14); color: var(--green); }
+    .tier .tile.a { background: rgba(242, 165, 74, 0.14); color: var(--amber); }
+    .tier .tile.r { background: rgba(242, 107, 107, 0.14); color: var(--red); }
+    .tier h3 { font-size: 18px; font-weight: 700; margin-top: 16px; }
+    .tier .q { color: var(--t2); font-size: 14.5px; margin-top: 4px; }
+    .tier .how { font-size: 14px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--t1); font-weight: 600; }
+    .rules { margin-top: 16px; }
+    .rules li { display: flex; gap: 14px; padding: 16px 18px; border-top: 1px solid var(--line); }
+    .rules li:first-child { border-top: 0; }
+    .rules li .ico { color: var(--t3); margin-top: 3px; }
+    .rules li p { color: var(--t2); font-size: 15.5px; }
+    .rules li p b { color: var(--t1); font-weight: 600; }
+    .caveat { color: var(--t3); font-size: 14px; margin-top: 16px; max-width: 760px; }
+
+    /* Privacy */
+    .priv { display: grid; gap: 16px; margin-top: 36px; }
+    .priv .panel p { padding: 20px 18px 22px; font-size: clamp(17px, 1.7vw, 20px); line-height: 1.5; color: var(--t1); text-wrap: pretty; }
+
+    /* Open source */
+    .links a.row {
+      display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-top: 1px solid var(--line);
+      color: var(--t1); text-decoration: none; transition: background-color .15s ease;
+    }
+    .links a.row:first-of-type { border-top: 0; }
+    .links a.row:hover { background: var(--raised); }
+    .links a.row:last-child { border-radius: 0 0 var(--r) var(--r); }
+    .links .row > .ico:first-child { color: var(--t3); }
+    .links .row b { font-weight: 600; font-size: 15.5px; display: block; }
+    .links .row span { display: block; color: var(--t2); font-size: 13.5px; }
+    .links .row .go { margin-left: auto; color: var(--t3); width: 16px; height: 16px; }
+    .build { display: flex; flex-direction: column; }
+    .build .in { padding: 18px; }
+    .build .cmd { background: var(--bar); }
+    .build p { color: var(--t2); font-size: 14.5px; margin-top: 14px; }
+    .build p code { font-size: 12.5px; color: var(--t1); }
+    .ways { display: grid; gap: 16px; margin-top: 16px; }
+    .way { padding: 20px; }
+    .way .n { font-family: var(--mono); font-size: 13px; color: var(--t3); }
+    .way h3 { font-size: 17px; font-weight: 700; margin-top: 10px; }
+    .way p { color: var(--t2); font-size: 14.5px; margin-top: 6px; }
+    .way p code { font-size: 12.5px; color: var(--t1); }
+    .sub-h { margin-top: 48px; }
+
+    /* Install */
+    .install { display: grid; gap: 16px; margin-top: 36px; }
+    .install .in { padding: 18px; }
+    .steps { counter-reset: s; display: grid; gap: 14px; }
+    .steps li { counter-increment: s; position: relative; padding-left: 38px; color: var(--t2); font-size: 15.5px; }
+    .steps li::before {
+      content: counter(s); position: absolute; left: 0; top: -1px; width: 24px; height: 24px; border-radius: 7px;
+      background: var(--raised); color: var(--t1); font-size: 12.5px; font-weight: 700; display: grid; place-items: center;
+    }
+    .steps li b { color: var(--t1); font-weight: 600; }
+    .install .btn { margin-top: 20px; }
+    .install .cmd { background: var(--bar); }
+    .install .in > p { color: var(--t2); font-size: 14.5px; margin-top: 14px; }
+    .reqs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 16px; }
+
+    /* FAQ */
+    .faq { margin-top: 36px; }
+    .faq details { border-top: 1px solid var(--line); }
+    .faq details:first-child { border-top: 0; }
+    .faq summary {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 18px; cursor: pointer; list-style: none; font-size: 17px; font-weight: 700;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary .ico { color: var(--t3); transition: transform .2s ease; }
+    .faq details[open] summary .ico { transform: rotate(180deg); }
+    .faq details p { padding: 0 18px 20px; color: var(--t2); max-width: 820px; }
+
+    /* Closing */
+    .close { text-align: left; }
+    .close .cta { margin-top: 26px; }
+    .close .cmd { margin-top: 12px; max-width: 560px; }
+
+    /* Footer */
+    footer { border-top: 1px solid var(--line); background: var(--bar); padding: 40px 0 44px; }
+    .foot { display: grid; gap: 28px; }
+    .foot .by { color: var(--t2); font-size: 14.5px; margin-top: 12px; max-width: 320px; }
+    .foot h4 { font-size: 11.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--t3); }
+    .foot ul { margin-top: 12px; display: grid; gap: 8px; }
+    .foot ul a { color: var(--t2); font-size: 14.5px; }
+    .foot ul a:hover { color: var(--t1); }
+    .legal { color: var(--t3); font-size: 13px; margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--line); }
+    .legal a { color: var(--t2); }
+
+    /* Subtle reveal on scroll, only when the browser can run it */
+    .io .reveal { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .5s ease; }
+    .io .reveal.in { opacity: 1; transform: none; }
+
+    @media (min-width: 640px) {
+      :root { --gutter: 24px; }
+      .cap3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .cells, .cells.has-stars { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .cells.has-stars { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .cells .cell { border-top: 0; border-left: 1px solid var(--line); grid-column: auto !important; }
+      .cells .cell:first-child { border-left: 0; }
+      .paths .row { grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: baseline; }
+      .paths .row span { text-align: right; }
+      .promises { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+      .minis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .priv { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .reqs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .foot { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
+    }
+    @media (min-width: 800px) {
+      .tabs { display: flex; }
+      .tiers, .ways { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .install { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .feat-head { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: end; }
+      .feat .shot { margin-top: 32px; }
+    }
+    @media (min-width: 960px) {
+      :root { --gutter: 32px; }
+      section { padding: 104px 0; }
+      .hero { padding: 72px 0 96px; }
+      .two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; align-items: start; }
+      .manifesto { margin-top: 104px; padding-top: 104px; }
+      .feat { margin-top: 96px; }
+      .minis { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 96px; }
+    }
+    @media (min-width: 1080px) {
+      .hero-grid { grid-template-columns: minmax(0, 1fr) 372px; gap: 56px; align-items: end; }
+      .facts { display: block; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); }
+      .facts .panel-head { display: flex; }
+      .facts li { align-items: flex-start; gap: 14px; padding: 13px 18px; border-top: 1px solid var(--line); font-size: 15.5px; }
+      .facts li:first-child, .facts li:nth-child(2) { border-top: 0; }
+      .facts li.panel-head { align-items: center; }
+      .facts li .ico { margin-top: 3px; width: 18px; height: 18px; }
+      .facts li span { display: block; color: var(--t2); font-size: 13.5px; font-weight: 400; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .io .reveal { opacity: 1; transform: none; transition: none; }
+      .btn, .copy, .faq summary .ico, .links a.row { transition: none; }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <span class="logo">🫧</span>
-      <span class="name">TidyDisk</span>
-      <a class="by" href="https://riekapps.com">a RiekApps product</a>
-    </header>
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-mark" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#A659FF"/><g fill="#fff"><circle cx="12" cy="12.2" r="3.3"/><circle cx="6.6" cy="8.6" r="1.7"/><circle cx="16.6" cy="6.4" r="2"/><circle cx="18.2" cy="15.6" r="1.5"/><circle cx="7.8" cy="17.6" r="2"/></g></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></symbol>
+    <symbol id="i-out" viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+    <symbol id="i-pie" viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></symbol>
+    <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+    <symbol id="i-window" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20"/><path d="M6 4v4"/><path d="M10 4v4"/></symbol>
+    <symbol id="i-hammer" viewBox="0 0 24 24"><path d="m15 12-8.37 8.37a1 1 0 1 1-3-3L12 9"/><path d="m18 15 4-4"/><path d="m21.5 11.5-1.91-1.91A2 2 0 0 1 19 8.17V7l-2.26-2.26a6 6 0 0 0-4.2-1.76L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.17a2 2 0 0 1 1.42.59L18.5 14.5"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 2v2"/><path d="M15 2v2"/><path d="M9 20v2"/><path d="M15 20v2"/><path d="M2 9h2"/><path d="M2 15h2"/><path d="M20 9h2"/><path d="M20 15h2"/></symbol>
+    <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+    <symbol id="i-menubar" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M15 6h2.5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.59 2.59A2 2 0 0 0 11.17 2H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.42l8.7 8.7a2.43 2.43 0 0 0 3.42 0l6.58-6.58a2.43 2.43 0 0 0 0-3.42z"/><path d="M7.5 7.5h.01"/></symbol>
+    <symbol id="i-nouser" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m17 8 5 5"/><path d="m22 8-5 5"/></symbol>
+    <symbol id="i-laptop" viewBox="0 0 24 24"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9"/><path d="M4 16h16l1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45z"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-issue" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1.5"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+    <symbol id="i-log" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h12"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  </svg>
 
+  <header class="bar">
+    <div class="wrap">
+      <a class="brand" href="#top" aria-label="TidyDisk, back to top">
+        <svg class="mark" aria-hidden="true"><use href="#i-mark"/></svg>TidyDisk
+      </a>
+      <nav class="tabs" aria-label="Sections">
+        <a href="#features">Features</a>
+        <a href="#open-source">Open source</a>
+        <a href="#install">Install</a>
+        <a href="https://github.com/prateekcode/tidydisk" data-ev="github_clicked" data-place="nav_link">GitHub</a>
+      </nav>
+      <a class="btn sm ghost" href="https://github.com/prateekcode/tidydisk" data-ev="github_clicked" data-place="nav_star" aria-label="Star TidyDisk on GitHub">
+        <svg class="ico fill" aria-hidden="true"><use href="#i-github"/></svg>Star<span class="count" data-gh="stars-inline" hidden></span>
+      </a>
+    </div>
+  </header>
+
+  <main id="top">
     <section class="hero">
-      <h1>Your Mac is full of<br><span>developer junk.</span></h1>
-      <p class="sub">TidyDisk finds the gigabytes hiding in Xcode DerivedData, node_modules, simulators, package-manager caches and forgotten projects — and cleans them safely.</p>
-      <div class="cta">
-        <a class="btn" href="TidyDisk-2.0.zip" download>⬇&nbsp; Download for Mac — Free</a>
-        <span class="fineprint">Version 2.0 · macOS 14+ · Apple Silicon &amp; Intel · <b>Notarized by Apple</b></span>
-        <span class="brew">or&nbsp; <b>brew install --cask prateekcode/tap/tidydisk</b></span>
+      <div class="wrap">
+        <div class="hero-grid">
+          <div>
+            <p class="label"><span class="sq"></span>Free and open source disk cleaner for macOS</p>
+            <h1 class="display">Get your developer Mac&rsquo;s space back.</h1>
+            <p class="lead">TidyDisk finds what Xcode, simulators, node_modules, Gradle, package caches and AI tools leave behind, shows you what each item is, and removes only what you tick.</p>
+            <div class="cta">
+              <a class="btn primary" href="TidyDisk-2.0.zip" download data-ev="download_clicked" data-place="hero">
+                <svg class="ico" aria-hidden="true"><use href="#i-download"/></svg>Download for Mac
+              </a>
+              <a class="btn ghost" href="https://github.com/prateekcode/tidydisk" data-ev="github_clicked" data-place="hero">
+                <svg class="ico fill" aria-hidden="true"><use href="#i-github"/></svg>Read the source
+              </a>
+            </div>
+            <div class="cmd">
+              <code><span class="p">$</span>brew install <span class="nb">--cask</span> <span class="nb">prateekcode/tap/tidydisk</span></code>
+              <button class="copy" type="button" data-copy="brew install --cask prateekcode/tap/tidydisk" data-ev="brew_copied" data-place="hero" aria-label="Copy the Homebrew command">
+                <svg class="ico i-copy" aria-hidden="true"><use href="#i-copy"/></svg><svg class="ico i-ok" aria-hidden="true"><use href="#i-check"/></svg><span class="lbl" aria-live="polite">Copy</span>
+              </button>
+            </div>
+            <p class="fine">Version 2.0 · macOS 14+ · Apple Silicon and Intel · Notarized by Apple</p>
+          </div>
+
+          <ul class="facts" aria-label="What you get">
+            <li class="panel-head" aria-hidden="true"><span class="label" style="display:inline-flex">TidyDisk 2.0</span><span class="badge" style="display:inline">Free</span></li>
+            <li><svg class="ico" aria-hidden="true"><use href="#i-tag"/></svg><div>Free<span>Every feature. No trial, no card.</span></div></li>
+            <li><svg class="ico" aria-hidden="true"><use href="#i-scale"/></svg><div>MIT licensed<span>Use it, change it, share it.</span></div></li>
+            <li><svg class="ico" aria-hidden="true"><use href="#i-code"/></svg><div>Open source on GitHub<span>Every line it runs is public.</span></div></li>
+            <li><svg class="ico" aria-hidden="true"><use href="#i-nouser"/></svg><div>No account<span>Nothing to sign up for.</span></div></li>
+            <li><svg class="ico" aria-hidden="true"><use href="#i-laptop"/></svg><div>Runs on your Mac<span>No server, no upload.</span></div></li>
+          </ul>
+        </div>
+
+        <figure class="shot">
+          <div class="win" style="--w:2360;--h:1560">
+            <span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span>
+            <a href="shots/overview.png" aria-label="Open the Overview screenshot at full size">
+              <img src="shots/overview.png" width="2360" height="1560" fetchpriority="high" decoding="async" alt="TidyDisk Overview tab: free space on the disk, how much could be cleared in three risk groups, a live system monitor and what AI tools use on this Mac">
+            </a>
+          </div>
+          <figcaption class="cap3">
+            <p><b>Overview.</b> Free space, and how much of the rest can be cleared, split into three risk groups.</p>
+            <p><b>Live system.</b> CPU, memory, network and battery in the same window.</p>
+            <p><b>AI on this Mac.</b> What AI tools hold on disk and in memory right now.</p>
+          </figcaption>
+        </figure>
+
+        <div class="glance panel" aria-label="Open source at a glance">
+          <div class="panel-head">
+            <span class="label"><svg class="ico fill" aria-hidden="true"><use href="#i-github"/></svg>Open source at a glance</span>
+            <a href="https://github.com/prateekcode/tidydisk" data-ev="github_clicked" data-place="glance">prateekcode/tidydisk<svg class="ico" aria-hidden="true"><use href="#i-out"/></svg></a>
+          </div>
+          <div class="cells" id="gh-cells">
+            <div class="cell">
+              <p class="label">Latest release</p>
+              <p class="v" data-gh="tag">v2.0</p>
+              <p class="s"><a href="https://github.com/prateekcode/tidydisk/releases/latest" data-gh="rel-link" data-ev="github_clicked" data-place="glance_release">Release notes</a></p>
+            </div>
+            <div class="cell">
+              <p class="label">Licence</p>
+              <p class="v">MIT</p>
+              <p class="s"><a href="https://github.com/prateekcode/tidydisk/blob/main/LICENSE" data-ev="github_clicked" data-place="glance_licence">Read the licence</a></p>
+            </div>
+            <div class="cell">
+              <p class="label">Last commit</p>
+              <p class="v" data-gh="pushed">On main</p>
+              <p class="s"><a href="https://github.com/prateekcode/tidydisk/commits/main" data-ev="github_clicked" data-place="glance_commits">Commit history</a></p>
+            </div>
+            <div class="cell" data-gh="stars-cell" hidden>
+              <p class="label">Stars</p>
+              <p class="v" data-gh="stars"></p>
+              <p class="s"><a href="https://github.com/prateekcode/tidydisk" data-ev="github_clicked" data-place="glance_star">Star it on GitHub</a></p>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="badges">
-        <span class="badge"><b>✓</b> 100% on-device — nothing leaves your Mac</span>
-        <span class="badge"><b>✓</b> No account, no telemetry</span>
-        <span class="badge"><b>✓</b> Review everything before it's deleted</span>
-      </div>
-      <img class="shot" src="screenshot.png" alt="TidyDisk overview: free space, what can be cleaned, live system monitor and AI usage" width="2360" height="1560">
     </section>
 
-    <section class="features">
-      <div class="card">
-        <div class="ico">✨</div>
-        <h3>Smart Scan</h3>
-        <p>Detects the dev tools installed on <em>your</em> Mac — Xcode, npm, CocoaPods, Gradle, Docker, Homebrew — and only scans what's actually there.</p>
-      </div>
-      <div class="card">
-        <div class="ico">🔭</div>
-        <h3>Space Lens for projects</h3>
-        <p>Finds every project on your Mac and shows what its build artifacts weigh. Clean node_modules and build folders, or archive whole projects to GitHub or iCloud first.</p>
-      </div>
-      <div class="card">
-        <div class="ico">🗂️</div>
-        <h3>Large files &amp; duplicates</h3>
-        <p>Surfaces forgotten multi-gigabyte files and duplicate downloads. Deletions go to Trash, so nothing is ever lost by accident.</p>
-      </div>
-      <div class="card">
-        <div class="ico">📊</div>
-        <h3>Lives in your menu bar</h3>
-        <p>Free-space at a glance, one-click scans, and an optional weekly scan that notifies you when junk piles up again.</p>
-      </div>
-      <div class="card">
-        <div class="ico">🛡️</div>
-        <h3>Three safety tiers</h3>
-        <p>Safe caches are pre-selected. Aggressive and nuclear options — like deleting all node_modules — always require an explicit opt-in.</p>
-      </div>
-      <div class="card">
-        <div class="ico">⚡</div>
-        <h3>Native &amp; tiny</h3>
-        <p>A real SwiftUI app, not Electron. Universal binary for Apple Silicon and Intel, a few megabytes on disk.</p>
+    <section id="why">
+      <div class="wrap">
+        <div class="two">
+          <div class="reveal">
+            <p class="label">Why it exists</p>
+            <h2 class="display">The space goes where Finder does not look.</h2>
+            <p class="lead">A developer Mac fills up in folders you never open.</p>
+            <p class="body" style="margin-top:14px">Xcode keeps build output for every project you have built. Each simulator runtime takes gigabytes. Every repo you clone carries its own node_modules. Gradle, CocoaPods, npm, Homebrew and Docker each keep a cache. And now AI tools add models, chat history and logs on top.</p>
+            <p class="body">Cleaning it by hand means remembering which folders are safe to wipe and which will cost you an hour of rebuilding. TidyDisk knows these places by name, measures them, and tells you which is which.</p>
+          </div>
+          <div class="panel paths reveal">
+            <div class="panel-head"><span class="label">Where it hides</span></div>
+            <div class="row"><code>~/<wbr>Library/<wbr>Developer/<wbr>Xcode/<wbr>DerivedData</code><span>Xcode build output</span></div>
+            <div class="row"><code>~/<wbr>Library/<wbr>Developer/<wbr>CoreSimulator</code><span>Simulators</span></div>
+            <div class="row"><code>~/<wbr>Library/<wbr>Developer/<wbr>Xcode/<wbr>iOS DeviceSupport</code><span>Old device support</span></div>
+            <div class="row"><code>~/<wbr>.gradle/<wbr>caches</code><span>Gradle</span></div>
+            <div class="row"><code>~/<wbr>Library/<wbr>Caches/<wbr>CocoaPods</code><span>CocoaPods</span></div>
+            <div class="row"><code>~/<wbr>.npm/<wbr>_cacache</code><span>npm</span></div>
+            <div class="row"><code>*/<wbr>node_modules</code><span>One per project</span></div>
+            <div class="row"><code>~/<wbr>.ollama/<wbr>models</code><span>Local AI models</span></div>
+            <p class="note">A few of the places TidyDisk measures. A cleaner is shown only when its folder, app or tool exists on your Mac.</p>
+          </div>
+        </div>
+
+        <div class="manifesto reveal">
+          <p class="label"><span class="sq"></span>Why it is free and open source</p>
+          <p class="statement display"><span>A disk cleaner asks for deep access to your files.</span> You should be able to read every line of what it does.</p>
+          <p class="lead">So the whole app is on GitHub under the MIT licence. Every folder it measures and every command it runs is in the source, and the list of cleaners is a single Swift file. You do not have to take a cleaner&rsquo;s word for it: open the code, or build the app yourself.</p>
+          <ul class="promises">
+            <li>
+              <h3><svg class="ico" aria-hidden="true"><use href="#i-tag"/></svg>No subscription</h3>
+              <p>TidyDisk is free. There is nothing to renew and no trial that runs out.</p>
+            </li>
+            <li>
+              <h3><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>No upsell</h3>
+              <p>No locked buttons and no &ldquo;upgrade to clean more&rdquo;. What you see is the whole app.</p>
+            </li>
+            <li>
+              <h3><svg class="ico" aria-hidden="true"><use href="#i-laptop"/></svg>Your files stay on your Mac</h3>
+              <p>Scanning and cleaning happen locally. No file, file name or path is uploaded anywhere.</p>
+            </li>
+          </ul>
+          <a class="more" href="https://github.com/prateekcode/tidydisk/blob/main/Sources/TidyDisk/Models/Catalog.swift" data-ev="github_clicked" data-place="why_catalog">Read the list of what it cleans<svg class="ico" aria-hidden="true"><use href="#i-out"/></svg></a>
+        </div>
       </div>
     </section>
 
-    <section class="install">
-      <h2>Install in 10 seconds</h2>
-      <div class="steps">
-        <div class="step"><div class="n">1</div><p><b>Download</b> the zip and open it — it unpacks to TidyDisk.app.</p></div>
-        <div class="step"><div class="n">2</div><p><b>Drag TidyDisk.app</b> into your Applications folder.</p></div>
-        <div class="step"><div class="n">3</div><p><b>Open it</b> and hit Scan. It's notarized by Apple, so it opens without warnings.</p></div>
+    <section id="features">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="label">What is inside</p>
+          <h2 class="display">One window. One tab per job.</h2>
+          <p class="lead">Every screenshot on this page is the real app, running on a MacBook Air with a nearly full disk.</p>
+        </div>
+
+        <article class="feat reveal" id="disk">
+          <div class="feat-head">
+            <div>
+              <span class="tab"><svg class="ico" aria-hidden="true"><use href="#i-pie"/></svg>Disk</span>
+              <h3 class="display">See where the space went.</h3>
+              <p class="body">Developer data gets its own category, so projects, build output, package caches and SDKs do not disappear into &ldquo;Other&rdquo;.</p>
+            </div>
+            <ul class="ticks">
+              <li><b>Four views of one measurement:</b> by location, as a treemap, by folder and by file type.</li>
+              <li><b>One pass over every file:</b> about 2 million files in under 10 seconds on a MacBook Air.</li>
+              <li><b>Honest about gaps:</b> folders macOS protects are listed as not measured until you grant Full Disk Access.</li>
+            </ul>
+          </div>
+          <figure class="shot">
+            <div class="win" style="--w:2360;--h:1560">
+              <span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span>
+              <a href="shots/disk.png" aria-label="Open the Disk screenshot at full size">
+                <img src="shots/disk.png" width="2360" height="1560" loading="lazy" decoding="async" alt="TidyDisk Disk tab: a bar and a donut chart of disk use by kind, with Developer data the largest category at 78.13 GB, next to Photos and media, Apps, Documents, Downloads, Caches, Mail and Other">
+              </a>
+            </div>
+            <figcaption>The Disk tab on a 245 GB MacBook Air. Developer data is 78.13 GB, 32% of the disk.</figcaption>
+          </figure>
+        </article>
+
+        <article class="feat reveal" id="clean">
+          <div class="feat-head">
+            <div>
+              <span class="tab"><svg class="ico" aria-hidden="true"><use href="#i-sparkles"/></svg>Clean</span>
+              <h3 class="display">Clean by risk, not by guesswork.</h3>
+              <p class="body">Each cleaner says what it removes and how much it frees before you tick anything.</p>
+            </div>
+            <ul class="ticks">
+              <li><b>Three risk groups:</b> Safe to clean, Review before cleaning, Handle with care. One button selects the safe group. The other two are never selected for you.</li>
+              <li><b>Knows developer tools:</b> Xcode, CocoaPods, npm, pnpm and yarn, Gradle, Homebrew, SwiftPM, Docker and simulators.</li>
+              <li><b>Only what you have:</b> a cleaner appears when its folder, app or tool is on your Mac.</li>
+            </ul>
+          </div>
+          <figure class="shot">
+            <div class="win" style="--w:2940;--h:1716">
+              <span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span>
+              <a href="shots/clean.png" aria-label="Open the Clean screenshot at full size">
+                <img src="shots/clean.png" width="2940" height="1716" loading="lazy" decoding="async" alt="TidyDisk Clean tab: the Safe to clean group with Gradle caches at 9.39 GB, Trash, project build artifacts, SwiftPM cache, Xcode DerivedData, Homebrew cleanup, npm, pnpm and yarn caches and CocoaPods cache, each with its size and an empty checkbox">
+              </a>
+            </div>
+            <figcaption>The Clean tab after a scan: 22.95 GB in 20 places, nothing ticked yet.</figcaption>
+          </figure>
+        </article>
+
+        <article class="feat reveal" id="large-files">
+          <div class="feat-head">
+            <div>
+              <span class="tab"><svg class="ico" aria-hidden="true"><use href="#i-file"/></svg>Large Files</span>
+              <h3 class="display">Find the files you forgot.</h3>
+              <p class="body">Old disk images, exports and downloads, sorted by size.</p>
+            </div>
+            <ul class="ticks">
+              <li><b>You pick the size:</b> move the slider and see every file above it.</li>
+              <li><b>Only files you put there:</b> files inside apps, ~/Library and tool folders are left out.</li>
+              <li><b>To the Trash:</b> removing a file moves it to the Trash, so you can put it back.</li>
+            </ul>
+          </div>
+          <figure class="shot">
+            <div class="win" style="--w:2360;--h:1560">
+              <span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span>
+              <a href="shots/largeFiles.png" aria-label="Open the Large Files screenshot at full size">
+                <img src="shots/largeFiles.png" width="2360" height="1560" loading="lazy" decoding="async" alt="TidyDisk Large Files tab with the size slider set to 500 MB, showing the message Nothing over 500 MB on this Mac">
+              </a>
+            </div>
+            <figcaption>The Large Files tab with the slider at 500 MB. On this Mac nothing is that large, so the list is empty.</figcaption>
+          </figure>
+        </article>
+
+        <article class="feat reveal" id="ai">
+          <div class="feat-head">
+            <div>
+              <span class="tab"><svg class="ico" aria-hidden="true"><use href="#i-cpu"/></svg>AI</span>
+              <h3 class="display">What AI tools cost your Mac.</h3>
+              <p class="body">Claude, ChatGPT, Ollama, LM Studio, Cursor and others, measured in disk, memory and CPU.</p>
+            </div>
+            <ul class="ticks">
+              <li><b>On disk:</b> models, caches and app data per tool, with the option to remove what you tick.</li>
+              <li><b>Running now:</b> memory and CPU per AI app, with MCP servers listed on their own.</li>
+              <li><b>Local servers:</b> which ports are open on this Mac and which process owns each.</li>
+            </ul>
+          </div>
+          <figure class="shot">
+            <div class="win" style="--w:2360;--h:1560">
+              <span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span>
+              <a href="shots/ai.png" aria-label="Open the AI usage screenshot at full size">
+                <img src="shots/ai.png" width="2360" height="1560" loading="lazy" decoding="async" alt="TidyDisk AI usage tab: 26.09 GB of AI data on disk, 8.49 GB of memory used by 3 AI apps, a per-tool list with Claude, Claude Code, ChatGPT and Codex, Gemini CLI, GitHub Copilot and Hugging Face, running processes including MCP servers, and a list of local server ports">
+              </a>
+            </div>
+            <figcaption>The AI tab: 26.09 GB on disk across six tools, three AI apps in memory, and the local ports they listen on.</figcaption>
+          </figure>
+        </article>
+
+        <article class="feat reveal" id="monitor">
+          <div class="feat-head">
+            <div>
+              <span class="tab"><svg class="ico" aria-hidden="true"><use href="#i-pulse"/></svg>Monitor</span>
+              <h3 class="display">A system monitor in the same window.</h3>
+              <p class="body">See what is busy before you decide what to close or clean.</p>
+            </div>
+            <ul class="ticks">
+              <li><b>Live readings:</b> CPU, GPU, memory, disk, network, battery and uptime.</li>
+              <li><b>Top processes:</b> apps and processes sorted by CPU or by memory.</li>
+              <li><b>Speed test:</b> a network speed test that runs only when you press Run.</li>
+            </ul>
+          </div>
+          <figure class="shot">
+            <div class="win" style="--w:2360;--h:1560">
+              <span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span><span class="dot" aria-hidden="true"></span>
+              <a href="shots/monitor.png" aria-label="Open the Monitor screenshot at full size">
+                <img src="shots/monitor.png" width="2360" height="1560" loading="lazy" decoding="async" alt="TidyDisk Monitor tab: tiles for CPU, GPU, memory, disk, network, battery, uptime and speed test above a list of the top apps and processes sorted by CPU">
+              </a>
+            </div>
+            <figcaption>The Monitor tab, refreshing every 3 seconds, with a low disk space notice and the top processes by CPU.</figcaption>
+          </figure>
+        </article>
+
+        <div class="minis">
+          <article class="panel mini reveal">
+            <div class="tile"><svg class="ico" aria-hidden="true"><use href="#i-window"/></svg></div>
+            <p class="label">Apps</p>
+            <h3>Uninstall with the leftovers</h3>
+            <p>Each app is listed with the files it keeps in ~/Library. Uninstalling moves the app and those files to the Trash. Leftovers of apps you already removed are found too.</p>
+          </article>
+          <article class="panel mini reveal">
+            <div class="tile"><svg class="ico" aria-hidden="true"><use href="#i-hammer"/></svg></div>
+            <p class="label">Projects</p>
+            <h3>Build output, per project</h3>
+            <p>Finds your dev projects and clears what they can rebuild: <code>node_modules</code>, <code>build</code>, <code>.dart_tool</code>, <code>Pods</code>, <code>.gradle</code>.</p>
+          </article>
+          <article class="panel mini reveal">
+            <div class="tile"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg></div>
+            <p class="label">Duplicates</p>
+            <h3>Identical files, found by content</h3>
+            <p>Checks Downloads and Desktop for files with the same content. The newest copy is kept. The rest go to the Trash when you say so.</p>
+          </article>
+          <article class="panel mini reveal">
+            <div class="tile"><svg class="ico" aria-hidden="true"><use href="#i-menubar"/></svg></div>
+            <p class="label">Menu bar</p>
+            <h3>Free space, always in view</h3>
+            <p>Live free space in the menu bar, a scan in one click, and an optional weekly scan that notifies you when there is something to clear.</p>
+          </article>
+        </div>
       </div>
     </section>
 
-    <footer>
-      <p>© 2026 <a href="https://riekapps.com">RiekApps</a> · TidyDisk runs entirely on your Mac — no data is collected or transmitted.</p>
-      <p><a href="https://github.com/prateekcode/tidydisk">Open source on GitHub</a> · Questions? <a href="mailto:riekapps@gmail.com">Get in touch</a></p>
-    </footer>
-  </div>
+    <section id="safety">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="label">Safety model</p>
+          <h2 class="display">Nothing is removed until you say so.</h2>
+          <p class="lead">Everything a scan finds is sorted into three groups by what it costs to get back.</p>
+        </div>
+        <div class="tiers">
+          <article class="panel tier reveal">
+            <div class="tile g"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg></div>
+            <h3>Safe to clean</h3>
+            <p class="q">Rebuilt by the system or the app when needed.</p>
+            <p class="how">One button selects this group.</p>
+          </article>
+          <article class="panel tier reveal">
+            <div class="tile a"><svg class="ico" aria-hidden="true"><use href="#i-eye"/></svg></div>
+            <h3>Review before cleaning</h3>
+            <p class="q">Comes back on demand, but downloading or indexing it again takes time.</p>
+            <p class="how">Never selected for you.</p>
+          </article>
+          <article class="panel tier reveal">
+            <div class="tile r"><svg class="ico" aria-hidden="true"><use href="#i-warn"/></svg></div>
+            <h3>Handle with care</h3>
+            <p class="q">Needs a reinstall before the project runs again.</p>
+            <p class="how">Never selected for you. Asks once more.</p>
+          </article>
+        </div>
+        <ul class="panel rules reveal">
+          <li><svg class="ico" aria-hidden="true"><use href="#i-eye"/></svg><p><b>Scanning is read-only.</b> A scan only measures sizes.</p></li>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg><p><b>Nothing is ticked for you.</b> One button selects the safe group. The other two groups you tick yourself.</p></li>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-trash"/></svg><p><b>Files go to the Trash.</b> What you remove from Large Files, Apps, AI and Duplicates can be put back.</p></li>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-refresh"/></svg><p><b>Caches and build output are deleted,</b> because the tools that own them regenerate them.</p></li>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-log"/></svg><p><b>Every action is logged.</b> You can read what was done, skipped or failed in the app.</p></li>
+        </ul>
+        <p class="caveat">TidyDisk cannot know whether you still need something. Read the list before you clean, and keep backups of anything you cannot replace.</p>
+      </div>
+    </section>
+
+    <section id="privacy">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="label">Privacy</p>
+          <h2 class="display">What leaves your Mac: nothing, unless you say so.</h2>
+        </div>
+        <div class="priv">
+          <div class="panel reveal">
+            <div class="panel-head"><span class="label"><svg class="ico" aria-hidden="true"><use href="#i-lock"/></svg>The app</span></div>
+            <p>The app has no account and no ads. It sends nothing unless you switch on anonymous usage statistics in Settings, which are off by default.</p>
+          </div>
+          <div class="panel reveal">
+            <div class="panel-head"><span class="label"><svg class="ico" aria-hidden="true"><use href="#i-globe"/></svg>This website</span></div>
+            <p>This website counts visits with our own first-party analytics: no cookies for ads, no third parties.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="open-source">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="label">Open source</p>
+          <h2 class="display">Built in the open. Yours to change.</h2>
+          <p class="lead">TidyDisk is a SwiftUI app built with Swift Package Manager: no Xcode project and no third-party dependencies. Read it, fork it, or send a fix.</p>
+        </div>
+        <div class="two" style="margin-top:36px">
+          <div class="panel links reveal">
+            <div class="panel-head"><span class="label">The project</span><span class="badge">MIT</span></div>
+            <a class="row" href="https://github.com/prateekcode/tidydisk" data-ev="github_clicked" data-place="os_repo">
+              <svg class="ico fill" aria-hidden="true"><use href="#i-github"/></svg>
+              <div><b>Repository</b><span>github.com/prateekcode/tidydisk</span></div>
+              <svg class="ico go" aria-hidden="true"><use href="#i-out"/></svg>
+            </a>
+            <a class="row" href="https://github.com/prateekcode/tidydisk/issues" data-ev="github_clicked" data-place="os_issues">
+              <svg class="ico" aria-hidden="true"><use href="#i-issue"/></svg>
+              <div><b>Issues</b><span>Report a bug or a cleaner that is missing</span></div>
+              <svg class="ico go" aria-hidden="true"><use href="#i-out"/></svg>
+            </a>
+            <a class="row" href="https://github.com/prateekcode/tidydisk/discussions" data-ev="github_clicked" data-place="os_discussions">
+              <svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg>
+              <div><b>Discussions</b><span>Questions and ideas</span></div>
+              <svg class="ico go" aria-hidden="true"><use href="#i-out"/></svg>
+            </a>
+            <a class="row" href="https://github.com/prateekcode/tidydisk/blob/main/CONTRIBUTING.md" data-ev="github_clicked" data-place="os_contributing">
+              <svg class="ico" aria-hidden="true"><use href="#i-book"/></svg>
+              <div><b>CONTRIBUTING.md</b><span>How to build, test and send a change</span></div>
+              <svg class="ico go" aria-hidden="true"><use href="#i-out"/></svg>
+            </a>
+            <a class="row" href="https://github.com/prateekcode/tidydisk/blob/main/LICENSE" data-ev="github_clicked" data-place="os_licence">
+              <svg class="ico" aria-hidden="true"><use href="#i-scale"/></svg>
+              <div><b>MIT licence</b><span>Use, modify and redistribute</span></div>
+              <svg class="ico go" aria-hidden="true"><use href="#i-out"/></svg>
+            </a>
+          </div>
+          <div class="panel build reveal">
+            <div class="panel-head"><span class="label"><svg class="ico" aria-hidden="true"><use href="#i-code"/></svg>Build it yourself</span></div>
+            <div class="in">
+              <div class="cmd">
+                <code><span class="p">$</span>git clone https://github.com/<wbr>prateekcode/<wbr>tidydisk &amp;&amp; <span class="nb">cd tidydisk</span> &amp;&amp; <span class="nb">./build.sh</span></code>
+                <button class="copy" type="button" data-copy="git clone https://github.com/prateekcode/tidydisk &amp;&amp; cd tidydisk &amp;&amp; ./build.sh" aria-label="Copy the build command">
+                  <svg class="ico i-copy" aria-hidden="true"><use href="#i-copy"/></svg><svg class="ico i-ok" aria-hidden="true"><use href="#i-check"/></svg><span class="lbl" aria-live="polite">Copy</span>
+                </button>
+              </div>
+              <p><code>build.sh</code> compiles the package and assembles <code>TidyDisk.app</code> in the repo folder. Add <code>--install</code> to copy it to Applications.</p>
+              <p>Needs macOS 14 and the Swift toolchain that comes with Xcode or the Command Line Tools.</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="label sub-h reveal">Three ways to help that cost nothing</p>
+        <div class="ways">
+          <article class="panel way reveal">
+            <p class="n">01</p>
+            <h3>Star the repo</h3>
+            <p>It is how other developers find a small open source tool. <a href="https://github.com/prateekcode/tidydisk" data-ev="github_clicked" data-place="os_star">Star TidyDisk on GitHub.</a></p>
+          </article>
+          <article class="panel way reveal">
+            <p class="n">02</p>
+            <h3>Report a missing cleaner</h3>
+            <p>If a tool you use fills your disk and TidyDisk does not know it, <a href="https://github.com/prateekcode/tidydisk/issues" data-ev="github_clicked" data-place="os_report">open an issue</a> with the folder path.</p>
+          </article>
+          <article class="panel way reveal">
+            <p class="n">03</p>
+            <h3>Add a CleanupTask</h3>
+            <p>A cleaner is one <code>CleanupTask</code> entry in <a href="https://github.com/prateekcode/tidydisk/blob/main/Sources/TidyDisk/Models/Catalog.swift" data-ev="github_clicked" data-place="os_catalog">the catalog</a>: a name, a risk group and where to look.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="label">Install</p>
+          <h2 class="display">Two ways to install.</h2>
+        </div>
+        <div class="install">
+          <div class="panel reveal">
+            <div class="panel-head"><span class="label"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg>Download</span><span class="badge">3.6 MB</span></div>
+            <div class="in">
+              <ol class="steps">
+                <li><b>Download</b> the zip and open it. It unpacks to TidyDisk.app.</li>
+                <li><b>Drag TidyDisk.app</b> into your Applications folder.</li>
+                <li><b>Open it</b> and run a scan. The app is notarized by Apple, so it opens without warnings.</li>
+              </ol>
+              <a class="btn primary" href="TidyDisk-2.0.zip" download data-ev="download_clicked" data-place="install">
+                <svg class="ico" aria-hidden="true"><use href="#i-download"/></svg>Download for Mac
+              </a>
+            </div>
+          </div>
+          <div class="panel reveal">
+            <div class="panel-head"><span class="label"><svg class="ico" aria-hidden="true"><use href="#i-code"/></svg>Homebrew</span></div>
+            <div class="in">
+              <div class="cmd">
+                <code><span class="p">$</span>brew install <span class="nb">--cask</span> <span class="nb">prateekcode/tap/tidydisk</span></code>
+                <button class="copy" type="button" data-copy="brew install --cask prateekcode/tap/tidydisk" data-ev="brew_copied" data-place="install" aria-label="Copy the Homebrew command">
+                  <svg class="ico i-copy" aria-hidden="true"><use href="#i-copy"/></svg><svg class="ico i-ok" aria-hidden="true"><use href="#i-check"/></svg><span class="lbl" aria-live="polite">Copy</span>
+                </button>
+              </div>
+              <p>Installs the same notarized build from the <a href="https://github.com/prateekcode/homebrew-tap">prateekcode/homebrew-tap</a> cask.</p>
+            </div>
+          </div>
+        </div>
+        <div class="panel reqs cells reveal" aria-label="Requirements">
+          <div class="cell"><p class="label">macOS</p><p class="v">14 Sonoma or later</p></div>
+          <div class="cell"><p class="label">Processor</p><p class="v">Apple Silicon or Intel</p></div>
+          <div class="cell"><p class="label">Account</p><p class="v">None</p></div>
+          <div class="cell"><p class="label">Full Disk Access</p><p class="v">Optional</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="label">Questions</p>
+          <h2 class="display">Short answers.</h2>
+        </div>
+        <div class="panel faq reveal">
+          <details data-q="really_free">
+            <summary>Is it really free?<svg class="ico" aria-hidden="true"><use href="#i-down"/></svg></summary>
+            <p>Yes. Every feature in TidyDisk 2.0 is free. There is no trial, no subscription and no account. The source is MIT licensed, so you can also read it and build the app yourself.</p>
+          </details>
+          <details data-q="safe">
+            <summary>Is it safe?<svg class="ico" aria-hidden="true"><use href="#i-down"/></svg></summary>
+            <p>Scanning is read-only: it only measures sizes. Nothing is removed until you press Clean. One button selects the Safe to clean group, and the other two groups are never selected for you. Caches and build output are deleted because the tools regenerate them. Files you remove from Large Files, Apps, AI and Duplicates go to the Trash. Every action is logged. TidyDisk cannot know whether you still need something, so read the list before you clean.</p>
+          </details>
+          <details data-q="full_disk_access">
+            <summary>Does it need Full Disk Access?<svg class="ico" aria-hidden="true"><use href="#i-down"/></svg></summary>
+            <p>No. It works without it. macOS protects some folders, such as other apps&rsquo; containers and cloud storage. Without Full Disk Access TidyDisk leaves those out and tells you so. You can grant it in System Settings, Privacy and Security, if you want them counted.</p>
+          </details>
+          <details data-q="vs_paid">
+            <summary>How is it different from paid cleaners?<svg class="ico" aria-hidden="true"><use href="#i-down"/></svg></summary>
+            <p>It is built for developer machines. It knows Xcode, simulators, Gradle, CocoaPods, npm, Docker and AI tools by name, and uses each tool&rsquo;s own cleanup command where one exists. There is no subscription, and you can read the source. It does not scan for malware or promise to speed up your Mac.</p>
+          </details>
+          <details data-q="data_sent">
+            <summary>Where is my data sent?<svg class="ico" aria-hidden="true"><use href="#i-down"/></svg></summary>
+            <p>The app has no account and no ads. It sends nothing unless you switch on anonymous usage statistics in Settings, which are off by default. Features you start yourself, such as the speed test or pushing a project to GitHub, use the network only when you start them.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="close">
+      <div class="wrap reveal">
+        <p class="label"><span class="sq"></span>Start with a scan</p>
+        <h2 class="display">Run a scan. It only measures.</h2>
+        <p class="lead">See what your tools have left behind, then decide what goes.</p>
+        <div class="cta">
+          <a class="btn primary" href="TidyDisk-2.0.zip" download data-ev="download_clicked" data-place="closing">
+            <svg class="ico" aria-hidden="true"><use href="#i-download"/></svg>Download for Mac
+          </a>
+          <a class="btn ghost" href="https://github.com/prateekcode/tidydisk" data-ev="github_clicked" data-place="closing">
+            <svg class="ico fill" aria-hidden="true"><use href="#i-github"/></svg>Star on GitHub
+          </a>
+        </div>
+        <div class="cmd">
+          <code><span class="p">$</span>brew install <span class="nb">--cask</span> <span class="nb">prateekcode/tap/tidydisk</span></code>
+          <button class="copy" type="button" data-copy="brew install --cask prateekcode/tap/tidydisk" data-ev="brew_copied" data-place="closing" aria-label="Copy the Homebrew command">
+            <svg class="ico i-copy" aria-hidden="true"><use href="#i-copy"/></svg><svg class="ico i-ok" aria-hidden="true"><use href="#i-check"/></svg><span class="lbl" aria-live="polite">Copy</span>
+          </button>
+        </div>
+        <p class="fine">Version 2.0 · macOS 14+ · Apple Silicon and Intel · Notarized by Apple</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot">
+        <div>
+          <a class="brand" href="#top"><svg class="mark" aria-hidden="true"><use href="#i-mark"/></svg>TidyDisk</a>
+          <p class="by">Free, open source disk cleaner for Mac developers. <a href="https://riekapps.com">A RiekApps product.</a></p>
+        </div>
+        <div>
+          <h4>Product</h4>
+          <ul>
+            <li><a href="https://riekapps.com/app/tidydisk">TidyDisk on riekapps.com</a></li>
+            <li><a href="https://riekapps.com/blog/free-up-disk-space-on-mac">Guide: free up disk space on Mac</a></li>
+            <li><a href="TidyDisk-2.0.zip" download data-ev="download_clicked" data-place="footer">Download 2.0</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Source</h4>
+          <ul>
+            <li><a href="https://github.com/prateekcode/tidydisk" data-ev="github_clicked" data-place="footer">GitHub</a></li>
+            <li><a href="https://github.com/prateekcode/homebrew-tap">Homebrew tap</a></li>
+            <li><a href="https://github.com/prateekcode/tidydisk/blob/main/LICENSE" data-ev="github_clicked" data-place="footer_licence">MIT licence</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="mailto:riekapps@gmail.com">riekapps@gmail.com</a></li>
+            <li><a href="https://github.com/prateekcode/tidydisk/issues" data-ev="github_clicked" data-place="footer_issues">Report an issue</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="legal">&copy; 2026 <a href="https://riekapps.com">RiekApps</a>. TidyDisk is released under the MIT licence.</p>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    "use strict";
+    var doc = document;
+
+    // Copy buttons with a "Copied" state
+    function fallbackCopy(text) {
+      var ta = doc.createElement("textarea");
+      ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+      doc.body.appendChild(ta); ta.select();
+      try { doc.execCommand("copy"); } catch (e) {}
+      doc.body.removeChild(ta);
+    }
+    doc.addEventListener("click", function (e) {
+      var b = e.target && e.target.closest ? e.target.closest("[data-copy]") : null;
+      if (!b) return;
+      var text = b.getAttribute("data-copy"), lbl = b.querySelector(".lbl");
+      function done() {
+        b.classList.add("ok"); if (lbl) lbl.textContent = "Copied";
+        clearTimeout(b._t);
+        b._t = setTimeout(function () { b.classList.remove("ok"); if (lbl) lbl.textContent = "Copy"; }, 1800);
+      }
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text); done(); });
+        } else { fallbackCopy(text); done(); }
+      } catch (err) { fallbackCopy(text); done(); }
+    });
+
+    // Reveal on scroll (skipped without IntersectionObserver or with reduced motion)
+    try {
+      var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if ("IntersectionObserver" in window && !calm) {
+        doc.documentElement.classList.add("io");
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
+        }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+        doc.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+        // Never leave content hidden if the observer stalls
+        setTimeout(function () { doc.querySelectorAll(".reveal:not(.in)").forEach(function (el) {
+          var r = el.getBoundingClientRect(); if (r.top < window.innerHeight) el.classList.add("in");
+        }); }, 1200);
+      }
+    } catch (e) { doc.documentElement.classList.remove("io"); }
+
+    // Open source at a glance: live from the GitHub API, static text if it fails
+    (function () {
+      var API = "https://api.github.com/repos/prateekcode/tidydisk", KEY = "tidydisk.gh.v1", TTL = 30 * 60 * 1000;
+      function q(name) { return doc.querySelector('[data-gh="' + name + '"]'); }
+      function when(iso) {
+        var t = Date.parse(iso); if (!isFinite(t)) return null;
+        var days = Math.floor((Date.now() - t) / 864e5); if (days < 0) return null;
+        if (days === 0) return "Today";
+        if (days === 1) return "Yesterday";
+        if (days < 30) return days + " days ago";
+        try { return new Date(t).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); } catch (e) { return null; }
+      }
+      function apply(d) {
+        if (!d || typeof d !== "object") return;
+        if (typeof d.tag === "string" && /^[A-Za-z0-9._-]{1,24}$/.test(d.tag)) {
+          q("tag").textContent = d.tag;
+          var rel = q("rel-link"), rd = when(d.relDate);
+          if (rel && rd) rel.textContent = "Released " + rd.toLowerCase();
+        }
+        var pushed = when(d.pushed);
+        if (pushed) q("pushed").textContent = pushed;
+        if (typeof d.stars === "number" && isFinite(d.stars) && d.stars > 0 && Math.floor(d.stars) === d.stars) {
+          var n = d.stars.toLocaleString("en-US");
+          q("stars").textContent = n;
+          q("stars-cell").hidden = false;
+          doc.getElementById("gh-cells").classList.add("has-stars");
+          var inline = q("stars-inline"); inline.textContent = n; inline.hidden = false;
+        }
+      }
+      try {
+        var cached = JSON.parse(sessionStorage.getItem(KEY) || "null");
+        if (cached && Date.now() - cached.t < TTL) { apply(cached); return; }
+      } catch (e) {}
+      if (!window.fetch) return;
+      function json(r) { if (!r.ok) throw new Error("gh " + r.status); return r.json(); }
+      var opt = { headers: { Accept: "application/vnd.github+json" } };
+      Promise.all([
+        fetch(API, opt).then(json),
+        fetch(API + "/releases/latest", opt).then(json).catch(function () { return null; })
+      ]).then(function (res) {
+        var repo = res[0] || {}, rel = res[1] || {};
+        var d = { t: Date.now(), stars: repo.stargazers_count, pushed: repo.pushed_at, tag: rel.tag_name, relDate: rel.published_at };
+        apply(d);
+        try { sessionStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {}
+      }).catch(function () {});
+    })();
+  })();
+  </script>
+
+  <script type="module">
+    import { Analytics } from "./earshot-analytics.js";
+    try {
+      Analytics.init({ appId: "tidydisk", version: "2.0", pages: true });
+      const track = (name, props) => { try { Analytics.track(name, props); } catch (e) {} };
+      document.addEventListener("click", (e) => {
+        const el = e.target instanceof Element ? e.target.closest("[data-ev]") : null;
+        if (!el) return;
+        const ev = el.getAttribute("data-ev");
+        const place = el.getAttribute("data-place") || "page";
+        if (ev === "download_clicked") track(ev, { version: "2.0", place });
+        else if (ev === "brew_copied" || ev === "github_clicked") track(ev, { place });
+      });
+      document.querySelectorAll("details[data-q]").forEach((d) => {
+        d.addEventListener("toggle", () => { if (d.open) track("faq_opened", { q: d.getAttribute("data-q") }); });
+      });
+    } catch (e) {}
+  </script>
 </body>
 </html>
