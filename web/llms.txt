@@ -5,8 +5,8 @@
 Made by RiekApps (https://riekapps.com), an indie app studio. Source code (MIT licence): https://github.com/prateekcode/tidydisk
 
 ## Facts
-- Free and open source under the MIT licence. Version 2.0, macOS 14 or later, Apple Silicon and Intel (universal), notarized by Apple.
-- Install: download https://tidydisk.riekapps.com/TidyDisk-2.0.zip, or `brew install --cask prateekcode/tap/tidydisk`.
+- Free and open source under the MIT licence. Version 2.1, macOS 14 or later, Apple Silicon and Intel (universal), notarized by Apple.
+- Install: download https://tidydisk.riekapps.com/TidyDisk-2.1.zip, or `brew install --cask prateekcode/tap/tidydisk`.
 - Build from source: `git clone https://github.com/prateekcode/tidydisk && cd tidydisk && ./build.sh` (Swift Package Manager, no third-party dependencies).
 - Privacy: the app has no account and no ads. It sends nothing unless you switch on anonymous usage statistics in Settings, which are off by default. Scanning and cleaning happen on the Mac.
 - Tabs: Overview, Disk, Clean, Large Files, Apps, Projects, AI, Monitor, plus Duplicates and a menu bar item.

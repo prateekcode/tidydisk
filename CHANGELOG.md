@@ -4,6 +4,8 @@ All notable changes to TidyDisk are listed here. The format follows [Keep a Chan
 
 ## [Unreleased]
 
+## [2.1] - 2026-11-26
+
 ### Added
 
 - A full Settings screen.
