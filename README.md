@@ -1,20 +1,35 @@
 # 🫧 TidyDisk
 
+[![Latest release](https://img.shields.io/github/v/release/prateekcode/tidydisk)](https://github.com/prateekcode/tidydisk/releases/latest)
+[![Build](https://github.com/prateekcode/tidydisk/actions/workflows/build.yml/badge.svg)](https://github.com/prateekcode/tidydisk/actions/workflows/build.yml)
+[![License: MIT](https://img.shields.io/github/license/prateekcode/tidydisk)](LICENSE)
+[![macOS 14+](https://img.shields.io/badge/macOS-14%2B-000000?logo=apple&logoColor=white)](#install)
+[![Swift and SwiftUI](https://img.shields.io/badge/Swift-SwiftUI-F05138?logo=swift&logoColor=white)](Package.swift)
+[![Homebrew cask](https://img.shields.io/badge/Homebrew-cask-FBB040?logo=homebrew&logoColor=white)](https://github.com/prateekcode/homebrew-tap)
+[![GitHub stars](https://img.shields.io/github/stars/prateekcode/tidydisk?style=flat)](https://github.com/prateekcode/tidydisk/stargazers)
+
 **Free disk cleaner for Mac developers.** Reclaims the gigabytes hiding in Xcode DerivedData, node_modules, simulators, package-manager caches and forgotten projects — safely, with everything reviewed before it's touched.
 
 **Website & download:** [tidydisk.riekapps.com](https://tidydisk.riekapps.com)
 
 ![TidyDisk main window](web/screenshot.png)
 
-- 100% on-device — no account, no telemetry; scanning and cleaning never leave your Mac
+- Runs on your Mac: no account, no ads. It sends nothing unless you switch on anonymous usage statistics in Settings, which are off by default ([Privacy](#privacy))
 - Native SwiftUI, universal binary (Apple Silicon + Intel), a few MB on disk
 - Notarized by Apple
+- Open source under the MIT license, and [open to contributions](#contributing)
 
 ## Why it exists
 
 A developer Mac fills up in places Finder doesn't show you: Xcode DerivedData and device-support folders, simulator runtimes, `~/.gradle`, npm/pnpm/yarn stores, Docker images, and a `node_modules` in every project you ever cloned. General-purpose cleaners don't know these locations, and cleaning them by hand means remembering which ones are safe to wipe and which ones will cost you an hour of rebuilding.
 
 TidyDisk is for iOS, Android, Flutter, web and backend developers who want that space back without writing (or trusting) a one-off shell script.
+
+### Why not just a shell script, or a general cleaner?
+
+A script works, and TidyDisk's catalog started as one. But a script removes what it was written for, on the Mac it was written on, and it does not show you sizes first. TidyDisk measures before it touches anything, offers only the tools that are installed on this Mac, sorts every cleaner into a risk group, and logs each action.
+
+A general-purpose cleaner covers the whole system, but developer folders are rarely its focus. TidyDisk does the opposite: it is narrow, free, and every cleaner is a few readable lines in [one file](Sources/TidyDisk/Models/Catalog.swift), so you can check exactly what will be removed before you trust it, or add the one that is missing.
 
 ## Install
 
@@ -42,6 +57,18 @@ TidyDisk probes your Mac at launch and only shows what is actually there:
 - **Monitor**: CPU, GPU, memory, disk, network, battery, top processes and a speed test
 - **Duplicates**: identical files in Downloads and Desktop, newest copy kept
 - **Menu bar**: free space at a glance (updates by itself), one-click scan, optional weekly scan with a notification
+
+**Disk**: where the space went, by location, map, folder and file type.
+
+![TidyDisk Disk tab: disk usage on a Mac broken down into developer files, apps, caches and other categories](web/shots/disk.png)
+
+**AI**: what local models, caches and chat data of AI tools take, and what is running now.
+
+![TidyDisk AI tab: disk, memory and CPU used by Claude, ChatGPT, Codex and other AI tools, with MCP servers and local ports](web/shots/ai.png)
+
+**Monitor**: live system readings and the heaviest processes.
+
+![TidyDisk Monitor tab: CPU, GPU, memory, disk, network, battery, uptime and top processes](web/shots/monitor.png)
 
 ## Safety model
 
@@ -109,7 +136,7 @@ Pure SwiftPM — no Xcode project needed:
 ./build.sh --install  # also copy to /Applications
 ```
 
-The task catalog lives in `Sources/TidyDisk/Models/Catalog.swift` — add a `CleanupTask` there to extend the app.
+The task catalog lives in `Sources/TidyDisk/Models/Catalog.swift` — add a `CleanupTask` there to extend the app. [CONTRIBUTING.md](CONTRIBUTING.md) walks through it.
 
 ## Testing
 
@@ -124,7 +151,26 @@ There's no automated test suite yet. To check a change:
 
 - Emptying Trash and reading some app containers needs **Full Disk Access** (System Settings → Privacy & Security). Without it those items report 0 and are skipped.
 - The weekly scan is a LaunchAgent running `TidyDisk --scan-notify` headless; its plist points at the app's executable, so re-toggle it if you move the app.
-- Network access is only used for features you start yourself, such as pushing a project to GitHub.
+- Network access is only used for features you start yourself, such as pushing a project to GitHub, and for the anonymous usage statistics if you switch them on.
+
+## Privacy
+
+TidyDisk has no account and no ads. It sends nothing unless you switch on anonymous usage statistics in Settings, and they are off by default.
+
+- Scanning, measuring and cleaning happen on your Mac.
+- If you switch statistics on, they are anonymous and limited to how the app is used. They never include file names, paths or folder names. The code that sends them is in [`UsageStats.swift`](Sources/TidyDisk/Engine/UsageStats.swift), so you can read exactly what is included.
+- The only other network traffic comes from features you start yourself, such as pushing a project to GitHub or running the speed test.
+
+## Contributing
+
+Contributions are welcome, and most of them are small: a cache TidyDisk does not know yet, an AI tool that is missing, a size that is wrong.
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) explains how to build the app, add a cleaner or an AI tool, and check a UI change. It also lists good first issues.
+- Know a tool or folder TidyDisk should clean? Fill in the [cleaner request form](https://github.com/prateekcode/tidydisk/issues/new?template=cleaner_request.yml). Paths and a typical size are enough.
+- Questions and ideas go to [Discussions](https://github.com/prateekcode/tidydisk/discussions); bugs to the [bug report form](https://github.com/prateekcode/tidydisk/issues/new?template=bug_report.yml).
+- Found something that could delete or expose files it should not? See [SECURITY.md](SECURITY.md) and report it privately.
+
+Changes between versions are in [CHANGELOG.md](CHANGELOG.md). Everyone taking part is expected to follow the [code of conduct](CODE_OF_CONDUCT.md).
 
 ## Links
 

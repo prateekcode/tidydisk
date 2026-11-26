@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or idea to talk through
+    url: https://github.com/prateekcode/tidydisk/discussions
+    about: Ask how something works, or float an idea before it becomes an issue.
+  - name: Website and download
+    url: https://tidydisk.riekapps.com
+    about: The latest notarized build and the install instructions.
+  - name: Security problem
+    url: https://github.com/prateekcode/tidydisk/security/policy
+    about: Anything that could delete or expose files beyond what the app shows. Please report it privately.

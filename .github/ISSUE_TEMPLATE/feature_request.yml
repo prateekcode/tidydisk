@@ -1,0 +1,53 @@
+name: Feature request
+description: A change to how TidyDisk works or looks. For a new tool or folder to clean, use the Cleaner request form.
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What were you trying to do, and where did TidyDisk fall short?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like
+      description: How it could work. A sketch or a screenshot of another tool is welcome.
+    validations:
+      required: true
+  - type: dropdown
+    id: tab
+    attributes:
+      label: Part of the app
+      options:
+        - Overview
+        - Disk
+        - Clean
+        - Large Files
+        - Apps
+        - Projects
+        - AI
+        - Monitor
+        - Duplicates
+        - Settings
+        - Menu bar
+        - Command line
+        - Something new
+    validations:
+      required: false
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you do today instead
+      description: A script, another app, or nothing.
+    validations:
+      required: false
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Would you work on it
+      options:
+        - label: I would open a pull request for this
+          required: false

@@ -1,0 +1,97 @@
+name: Bug report
+description: Something TidyDisk did wrong, showed wrong, or did not do.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. If TidyDisk removed something it should not have, say so in the first line and stop cleaning until we answer.
+        Security problems (anything that could delete or expose files beyond what the app shows) go through the [security policy](https://github.com/prateekcode/tidydisk/security/policy), not a public issue.
+  - type: input
+    id: version
+    attributes:
+      label: TidyDisk version
+      description: TidyDisk menu, About TidyDisk. Or run `defaults read /Applications/TidyDisk.app/Contents/Info CFBundleShortVersionString`.
+      placeholder: "2.0"
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      description: Apple menu, About This Mac.
+      placeholder: "15.2"
+    validations:
+      required: true
+  - type: dropdown
+    id: chip
+    attributes:
+      label: Chip
+      options:
+        - Apple Silicon
+        - Intel
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How you installed it
+      options:
+        - Homebrew cask
+        - Zip from the website or a GitHub release
+        - Built from source
+    validations:
+      required: true
+  - type: dropdown
+    id: tab
+    attributes:
+      label: Where it happened
+      options:
+        - Overview
+        - Disk
+        - Clean
+        - Large Files
+        - Apps
+        - Projects
+        - AI
+        - Monitor
+        - Duplicates
+        - Settings
+        - Menu bar
+        - Weekly scan
+        - Somewhere else
+    validations:
+      required: true
+  - type: dropdown
+    id: fda
+    attributes:
+      label: Full Disk Access
+      description: System Settings, Privacy & Security, Full Disk Access. Is TidyDisk switched on there?
+      options:
+        - "Yes"
+        - "No"
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened
+      description: The steps you took and what you saw. A screenshot helps; hide anything private first.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Log screen output
+      description: Open the Log screen (the lines icon at the right end of the top bar, next to Settings), select the lines around the problem and paste them here. Paths in the log start with `~`, but check for project or file names you would rather not share.
+      render: text
+    validations:
+      required: false

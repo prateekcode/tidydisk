@@ -1,0 +1,31 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: swift build (release)
+    # Releases are built with Xcode 27 (Swift 6.4, Swift 5 language mode). This image
+    # ships an older Xcode by default; if the build fails on a toolchain difference,
+    # switch to the `xcode-27` runner label.
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain
+        run: swift --version
+
+      - name: Build
+        run: swift build -c release

@@ -1,0 +1,79 @@
+name: Cleaner request
+description: A tool or folder TidyDisk should clean (a cache, a package manager, an AI tool).
+title: "[Cleaner] "
+labels: ["cleaner"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Most cleaners are one entry in a catalog, so a precise request is often half a pull request. [CONTRIBUTING.md](https://github.com/prateekcode/tidydisk/blob/main/CONTRIBUTING.md) shows how to add one yourself.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of thing is it
+      options:
+        - Developer tool cache (package manager, build system, IDE)
+        - AI tool (models, caches, chat data)
+        - App cache
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: tool
+    attributes:
+      label: Tool or app
+      description: Name and, if it matters, the version.
+      placeholder: "pip 25"
+    validations:
+      required: true
+  - type: textarea
+    id: paths
+    attributes:
+      label: Path or paths
+      description: Where the data lives, one per line, starting with `~/` when it is in your home folder. If the tool has its own cleanup command, add it too.
+      placeholder: |
+        ~/Library/Caches/pip
+        pip cache purge
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: size
+    attributes:
+      label: Typical size
+      description: What `du -sh <path>` prints on your Mac.
+      placeholder: "3.2G"
+    validations:
+      required: false
+  - type: dropdown
+    id: regenerated
+    attributes:
+      label: Is it regenerated automatically
+      description: After you delete it, does the tool rebuild or re-download it by itself the next time it runs?
+      options:
+        - "Yes, by itself"
+        - "Yes, but it takes a long download or a re-index"
+        - "No, the user has to reinstall or set something up again"
+        - "No, it holds things that cannot be recreated (settings, history, documents)"
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Suggested risk group
+      description: Safe to clean is ticked for the user after a scan. The other two always need an explicit opt-in.
+      options:
+        - Safe to clean (rebuilt by the system or app when needed)
+        - Review before cleaning (comes back on demand, but re-downloading or re-indexing takes time)
+        - Handle with care (needs a reinstall before the project runs again)
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: A link to the tool's documentation of the folder, what breaks if it is removed while the tool runs, and so on.
+    validations:
+      required: false
